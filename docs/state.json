@@ -1,0 +1,89 @@
+{
+  "schema": 1,
+  "startedAt": "2026-08-19",
+  "updatedAt": "2026-08-19T13:22:34.828Z",
+  "components": [
+    {
+      "id": "console",
+      "name": "관리 콘솔",
+      "desc": "대시보드 · API",
+      "up": false,
+      "statusCode": 500,
+      "latencyMs": 76,
+      "error": null,
+      "changedAt": "2026-08-19T13:22:34.828Z"
+    },
+    {
+      "id": "web",
+      "name": "웹호스팅",
+      "desc": "웹호스팅 플랫폼",
+      "up": true,
+      "statusCode": 200,
+      "latencyMs": 86,
+      "error": null,
+      "changedAt": "2026-08-19T13:22:34.828Z"
+    },
+    {
+      "id": "cloud",
+      "name": "클라우드 서버",
+      "desc": "클라우드 VM 플랫폼",
+      "up": true,
+      "statusCode": 200,
+      "latencyMs": 125,
+      "error": null,
+      "changedAt": "2026-08-19T13:22:34.828Z"
+    },
+    {
+      "id": "domain",
+      "name": "도메인",
+      "desc": "도메인 등록 · DNS",
+      "up": true,
+      "statusCode": 200,
+      "latencyMs": 227,
+      "error": null,
+      "changedAt": "2026-08-19T13:22:34.828Z"
+    },
+    {
+      "id": "login",
+      "name": "로그인",
+      "desc": "LD PASS 통합 로그인",
+      "up": true,
+      "statusCode": 200,
+      "latencyMs": 190,
+      "error": null,
+      "changedAt": "2026-08-19T13:22:34.828Z"
+    }
+  ],
+  "daily": {
+    "console": {
+      "2026-08-19": {
+        "ok": 0,
+        "total": 1
+      }
+    },
+    "web": {
+      "2026-08-19": {
+        "ok": 1,
+        "total": 1
+      }
+    },
+    "cloud": {
+      "2026-08-19": {
+        "ok": 1,
+        "total": 1
+      }
+    },
+    "domain": {
+      "2026-08-19": {
+        "ok": 1,
+        "total": 1
+      }
+    },
+    "login": {
+      "2026-08-19": {
+        "ok": 1,
+        "total": 1
+      }
+    }
+  }
+}

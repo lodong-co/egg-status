@@ -1,0 +1,48 @@
+name: probe
+
+# 10분 간격. GitHub Pages 의 빌드 한도(시간당 약 10회)를 넘지 않도록 잡은 값이다.
+# 5분으로 당기면 시간당 12회가 되어 빌드가 밀리기 시작한다.
+#
+# ⚠ GitHub 의 schedule 은 러너가 붐비면 늦거나 건너뛸 수 있다. 그래서 이 값은
+#   "최소 10분"이 아니라 "대체로 10분"이다. 정밀 측정이 필요해지면 외부 프로버로 옮길 것
+#   (cloudflare/worker.js 에 대안 구현이 들어 있다).
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:        # 수동 실행 (Actions 탭 → Run workflow)
+
+permissions:
+  contents: write           # state.json 커밋
+
+# 앞 실행이 아직 안 끝났으면 겹치지 않게. 취소하지는 않는다(측정 한 번을 버리지 않기 위해).
+concurrency:
+  group: probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 프로브 실행
+        run: node scripts/probe.mjs
+
+      - name: 결과 커밋
+        run: |
+          git config user.name  "egg-status bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/state.json
+          # 변한 게 없으면 커밋하지 않는다(빈 커밋으로 Pages 빌드를 낭비하지 않도록).
+          if git diff --staged --quiet; then
+            echo "변경 없음 — 커밋 생략"
+            exit 0
+          fi
+          git commit -m "status: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          # 동시 실행이 겹쳤을 때를 대비해 rebase 후 push.
+          git pull --rebase --autostash origin "${GITHUB_REF_NAME}"
+          git push

@@ -1,0 +1,24 @@
+name = "egg-status"
+main = "src/worker.js"
+compatibility_date = "2026-08-19"
+
+# ⚠ KV 무료 쓰기 한도는 하루 1,000회. 이 워커는 실행당 1회 쓴다.
+#    5분 간격 =  288회/일  ✅
+#    1분 간격 = 1440회/일  ❌ 한도 초과
+# 간격을 바꿀 때는 반드시 다시 계산할 것.
+[triggers]
+crons = ["*/5 * * * *"]
+
+# 생성: wrangler kv namespace create STATUS
+# 출력된 id 를 아래에 붙여넣는다.
+[[kv_namespaces]]
+binding = "STATUS"
+id = "PUT_KV_NAMESPACE_ID_HERE"
+
+[vars]
+# 가동률 %(90일 누적) 표시 여부. 데이터가 쌓인 뒤 공개 여부를 따로 판단하기로 해서
+# 지금은 꺼 둔다. 수집은 켜져 있든 꺼져 있든 계속된다.
+SHOW_UPTIME = "false"
+
+# 수동 점검 트리거(POST /api/probe?token=...) 보호용.
+# 값은 코드에 넣지 말고 `wrangler secret put PROBE_TOKEN` 으로 등록할 것.

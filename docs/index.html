@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>에그호스팅 서비스 상태</title>
+<meta name="description" content="에그호스팅의 서비스별 운영 상태. 에그호스팅 인프라 외부에서 측정합니다.">
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#fff; --line:#e5e7eb; --fg:#111827; --muted:#6b7280;
+    --up:#16a34a; --down:#dc2626; --partial:#d97706; --pending:#9ca3af;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --bg:#0b0f14; --card:#131a22; --line:#243040; --fg:#e6edf3; --muted:#9aa7b4; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:760px;margin:0 auto;padding:48px 20px 64px}
+  header{display:flex;align-items:baseline;gap:10px;margin-bottom:28px;flex-wrap:wrap}
+  header h1{font-size:20px;margin:0;letter-spacing:-.01em}
+  header span{color:var(--muted);font-size:13px}
+  .banner{border-radius:12px;padding:18px 20px;margin-bottom:20px;font-weight:600;font-size:17px;
+    border:1px solid var(--line);background:var(--card)}
+  .banner.up{border-color:color-mix(in srgb,var(--up) 40%,var(--line));color:var(--up)}
+  .banner.partial{border-color:color-mix(in srgb,var(--partial) 40%,var(--line));color:var(--partial)}
+  .banner.down{border-color:color-mix(in srgb,var(--down) 40%,var(--line));color:var(--down)}
+  .banner.pending{color:var(--muted)}
+  table{width:100%;border-collapse:collapse;background:var(--card);
+    border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  td{padding:15px 20px;border-top:1px solid var(--line);vertical-align:middle}
+  tr:first-child td{border-top:0}
+  .name{display:flex;align-items:center;gap:11px}
+  .name b{font-weight:600;font-size:15px;display:block}
+  .name em{font-style:normal;color:var(--muted);font-size:12.5px;display:block;margin-top:1px}
+  .dot{width:9px;height:9px;border-radius:50%;flex:0 0 9px;background:var(--pending)}
+  .dot.up{background:var(--up)} .dot.down{background:var(--down)}
+  .state{text-align:right;font-size:13.5px;font-weight:500;color:var(--muted);white-space:nowrap}
+  .state.up{color:var(--up)} .state.down{color:var(--down)}
+  footer{margin-top:24px;color:var(--muted);font-size:12.5px;line-height:1.8}
+  footer p{margin:0}
+  .note{margin-top:18px;padding:14px 16px;border:1px solid var(--line);border-radius:10px;
+    background:var(--card);color:var(--muted);font-size:12.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>에그호스팅 서비스 상태</h1>
+    <span>egghosting.com</span>
+  </header>
+
+  <div class="banner pending" id="banner">불러오는 중…</div>
+  <table id="rows"></table>
+
+  <div class="note">
+    이 페이지는 <b>플랫폼 컴포넌트의 상태</b>이며, 개별 서비스의 상태가 아닙니다.
+    내 서비스 상태는 관리 콘솔에서 확인해 주세요.
+  </div>
+
+  <footer>
+    <p id="checked">—</p>
+    <p id="meta">점검은 에그호스팅 인프라 외부에서 수행됩니다</p>
+  </footer>
+</div>
+
+<script>
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+// KST 표기. 저장은 UTC ISO 라 표시할 때만 9시간 더한다.
+function fmtKst(iso){
+  const d = new Date(new Date(iso).getTime() + 9*3600*1000);
+  const p = n => String(n).padStart(2,'0');
+  return `${d.getUTCFullYear()}-${p(d.getUTCMonth()+1)}-${p(d.getUTCDate())} `
+       + `${p(d.getUTCHours())}:${p(d.getUTCMinutes())} KST`;
+}
+
+function render(state){
+  const comps = state.components || [];
+  const down = comps.filter(c => !c.up);
+  const overall = comps.length === 0
+    ? {cls:'pending', text:'측정 준비 중'}
+    : down.length === 0
+      ? {cls:'up', text:'모든 시스템 정상'}
+      : down.length === comps.length
+        ? {cls:'down', text:'전체 장애'}
+        : {cls:'partial', text:`일부 시스템 장애 (${down.length}건)`};
+
+  const banner = document.getElementById('banner');
+  banner.className = 'banner ' + overall.cls;
+  banner.textContent = overall.text;
+
+  document.getElementById('rows').innerHTML = comps.map(c => {
+    const cls = c.up ? 'up' : 'down';
+    return `<tr>
+      <td class="name"><span class="dot ${cls}"></span><span>
+        <b>${esc(c.name)}</b><em>${esc(c.desc)}</em></span></td>
+      <td class="state ${cls}">${c.up ? '정상' : '장애'}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('checked').textContent =
+    `마지막 점검 ${state.updatedAt ? fmtKst(state.updatedAt) : '—'} · 10분 간격 자동 점검`;
+  document.getElementById('meta').textContent =
+    '점검은 에그호스팅 인프라 외부에서 수행됩니다'
+    + (state.startedAt ? ` · 측정 시작 ${state.startedAt}` : '');
+}
+
+// 캐시를 타면 옛 상태를 보여주게 되어 페이지의 존재 이유가 사라진다.
+fetch('./state.json', {cache:'no-store'})
+  .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+  .then(render)
+  .catch(() => {
+    const b = document.getElementById('banner');
+    b.className = 'banner pending';
+    b.textContent = '상태를 불러올 수 없습니다';
+  });
+
+// 페이지를 열어둔 채로도 갱신되도록.
+setInterval(() => location.reload(), 120000);
+</script>
+</body>
+</html>
