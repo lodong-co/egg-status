@@ -9,6 +9,7 @@
 <meta property="og:description" content="서비스별 운영 상태를 에그호스팅 인프라 외부에서 측정해 공개합니다.">
 <meta property="og:type" content="website">
 <link rel="alternate" type="application/rss+xml" title="에그호스팅 서비스 상태" href="./feed.xml">
+<link rel="icon" type="image/png" href="./favicon.png">
 <style>
   :root{
     --bg:#f7f8fa; --surface:#fff; --line:#e4e7ec; --line-soft:#eef0f4;
@@ -38,10 +39,20 @@
   .wrap{max-width:860px;margin:0 auto;padding:48px 20px 72px}
 
   /* 헤더 · 구독 */
-  header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;
-    flex-wrap:wrap;margin-bottom:26px}
-  header h1{font-size:21px;margin:0 0 3px;letter-spacing:-.015em;font-weight:650}
-  header p{margin:0;color:var(--muted);font-size:13px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:16px;
+    flex-wrap:wrap;margin-bottom:30px}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .brand a{display:inline-flex;align-items:center;text-decoration:none}
+  .brand img{height:27px;width:auto;display:block}
+  /* 로고는 밝은 배경용·어두운 배경용 두 벌이다. 테마에 맞는 쪽만 남긴다. */
+  .brand .logo-dark{display:none}
+  @media (prefers-color-scheme:dark){
+    .brand .logo-light{display:none}
+    .brand .logo-dark{display:block}
+  }
+  .brand h1{font-size:15px;margin:0;font-weight:600;color:var(--muted);
+    letter-spacing:-.01em;padding-left:11px;border-left:1px solid var(--line);
+    white-space:nowrap}
   .subscribe{position:relative}
   .sub-btn{font:inherit;font-size:13px;font-weight:550;color:var(--fg);cursor:pointer;
     background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:8px 14px}
@@ -90,8 +101,10 @@
   .axis{display:flex;justify-content:space-between;margin-top:7px;font-size:11.5px;color:var(--faint)}
   .axis .uptime{color:var(--muted);font-variant-numeric:tabular-nums}
 
+  .panel-cap{margin:14px 0 0;font-size:12.5px;color:var(--muted);line-height:1.7}
+
   /* 범례 */
-  .legend{display:flex;flex-wrap:wrap;gap:7px 18px;margin-top:16px;font-size:12px;color:var(--muted)}
+  .legend{display:flex;flex-wrap:wrap;gap:7px 18px;margin-top:12px;font-size:12px;color:var(--muted)}
   .legend span{display:inline-flex;align-items:center;gap:6px}
   .legend i{width:9px;height:9px;border-radius:2px;display:inline-block;background:var(--nodata)}
   .legend i.ok{background:var(--ok)} .legend i.degraded{background:var(--degraded)}
@@ -131,11 +144,12 @@
     font-variant-numeric:tabular-nums}
 
   .note{margin-top:20px;color:var(--muted);font-size:12.5px;line-height:1.75}
-  footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--line);
+  footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--line);
     color:var(--faint);font-size:12.5px;line-height:1.8}
   footer p{margin:0}
-  footer a{color:var(--accent);text-decoration:none}
-  footer a:hover{text-decoration:underline}
+  footer a{color:var(--muted);text-decoration:none}
+  footer a:hover{color:var(--fg);text-decoration:underline}
+  .foot-links{margin-top:10px;display:flex;flex-wrap:wrap;gap:16px}
 
   @media (max-width:560px){
     .wrap{padding:34px 15px 56px}
@@ -149,9 +163,12 @@
 <body>
 <div class="wrap">
   <header>
-    <div>
-      <h1>에그호스팅 서비스 상태</h1>
-      <p>egghosting.com</p>
+    <div class="brand">
+      <a href="https://egghosting.com" title="에그호스팅">
+        <img class="logo-light" src="./logo-light.png" alt="에그호스팅" width="320" height="81">
+        <img class="logo-dark" src="./logo-dark.png" alt="에그호스팅" width="320" height="81">
+      </a>
+      <h1>서비스 상태</h1>
     </div>
     <div class="subscribe">
       <button class="sub-btn" id="subBtn" aria-expanded="false">알림 받기</button>
@@ -167,6 +184,9 @@
   </div>
 
   <div class="panel" id="panel"></div>
+
+  <p class="panel-cap">최근 90일 기록입니다. 점검은 에그호스팅 인프라 밖에서 수행하므로,
+    에그호스팅 전체가 중단되어도 이 기록은 계속 쌓입니다.</p>
 
   <div class="legend">
     <span><i class="ok"></i>정상</span>
@@ -188,6 +208,11 @@
   <footer>
     <p id="checked">—</p>
     <p id="meta">점검은 에그호스팅 인프라 외부에서 수행됩니다</p>
+    <p class="foot-links">
+      <a href="https://egghosting.com">에그호스팅</a>
+      <a href="https://egghosting.com/support">문의하기</a>
+      <a href="./feed.xml">RSS</a>
+    </p>
   </footer>
 </div>
 
