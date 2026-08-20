@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "startedAt": "2026-08-19",
-  "updatedAt": "2026-08-20T14:46:26.320Z",
+  "updatedAt": "2026-08-20T15:19:47.126Z",
   "components": [
     {
       "id": "console",
@@ -9,7 +9,7 @@
       "desc": "대시보드 · API",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 695,
+      "latencyMs": 696,
       "error": null,
       "changedAt": "2026-08-20T08:49:17.783Z"
     },
@@ -19,7 +19,7 @@
       "desc": "웹호스팅 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 676,
+      "latencyMs": 736,
       "error": null,
       "changedAt": "2026-08-19T13:22:34.828Z"
     },
@@ -29,7 +29,7 @@
       "desc": "클라우드 VM 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 947,
+      "latencyMs": 1021,
       "error": null,
       "changedAt": "2026-08-19T13:22:34.828Z"
     },
@@ -39,7 +39,7 @@
       "desc": "도메인 등록 · DNS",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 883,
+      "latencyMs": 1001,
       "error": null,
       "changedAt": "2026-08-19T13:22:34.828Z"
     },
@@ -49,7 +49,7 @@
       "desc": "LD PASS 통합 로그인",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 932,
+      "latencyMs": 1065,
       "error": null,
       "changedAt": "2026-08-19T13:22:34.828Z"
     }
@@ -63,6 +63,10 @@
       "2026-08-20": {
         "ok": 10,
         "total": 36
+      },
+      "2026-08-21": {
+        "ok": 1,
+        "total": 1
       }
     },
     "web": {
@@ -73,6 +77,10 @@
       "2026-08-20": {
         "ok": 36,
         "total": 36
+      },
+      "2026-08-21": {
+        "ok": 1,
+        "total": 1
       }
     },
     "cloud": {
@@ -83,6 +91,10 @@
       "2026-08-20": {
         "ok": 36,
         "total": 36
+      },
+      "2026-08-21": {
+        "ok": 1,
+        "total": 1
       }
     },
     "domain": {
@@ -93,6 +105,10 @@
       "2026-08-20": {
         "ok": 36,
         "total": 36
+      },
+      "2026-08-21": {
+        "ok": 1,
+        "total": 1
       }
     },
     "login": {
@@ -103,6 +119,10 @@
       "2026-08-20": {
         "ok": 36,
         "total": 36
+      },
+      "2026-08-21": {
+        "ok": 1,
+        "total": 1
       }
     }
   }
