@@ -5,59 +5,143 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>에그호스팅 서비스 상태</title>
 <meta name="description" content="에그호스팅의 서비스별 운영 상태. 에그호스팅 인프라 외부에서 측정합니다.">
+<meta property="og:title" content="에그호스팅 서비스 상태">
+<meta property="og:description" content="서비스별 운영 상태를 에그호스팅 인프라 외부에서 측정해 공개합니다.">
+<meta property="og:type" content="website">
 <style>
   :root{
-    --bg:#f6f7f9; --card:#fff; --line:#e5e7eb; --fg:#111827; --muted:#6b7280;
-    --up:#16a34a; --down:#dc2626; --partial:#d97706; --pending:#9ca3af;
+    --bg:#f7f8fa; --surface:#fff; --line:#e4e7ec; --line-soft:#eef0f4;
+    --fg:#101828; --muted:#667085; --faint:#98a2b3;
+    --accent:#0891b2;
+    --ok:#12a150; --degraded:#d9a209; --partial:#e2680f; --major:#d92d20; --unknown:#d7dae0;
   }
   @media (prefers-color-scheme:dark){
-    :root{ --bg:#0b0f14; --card:#131a22; --line:#243040; --fg:#e6edf3; --muted:#9aa7b4; }
+    :root{
+      --bg:#0f1115; --surface:#161a21; --line:#252b35; --line-soft:#1e232b;
+      --fg:#e6edf3; --muted:#93a0ae; --faint:#6b7885;
+      --accent:#22d3ee;
+      --ok:#2ea86a; --degraded:#c99a12; --partial:#d4711d; --major:#e05353; --unknown:#2b313a;
+    }
   }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--fg);
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;background:var(--bg);color:var(--fg);
     font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
-    line-height:1.5;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:760px;margin:0 auto;padding:48px 20px 64px}
-  header{display:flex;align-items:baseline;gap:10px;margin-bottom:28px;flex-wrap:wrap}
-  header h1{font-size:20px;margin:0;letter-spacing:-.01em}
-  header span{color:var(--muted);font-size:13px}
-  .banner{border-radius:12px;padding:18px 20px;margin-bottom:20px;font-weight:600;font-size:17px;
-    border:1px solid var(--line);background:var(--card)}
-  .banner.up{border-color:color-mix(in srgb,var(--up) 40%,var(--line));color:var(--up)}
-  .banner.partial{border-color:color-mix(in srgb,var(--partial) 40%,var(--line));color:var(--partial)}
-  .banner.down{border-color:color-mix(in srgb,var(--down) 40%,var(--line));color:var(--down)}
-  .banner.pending{color:var(--muted)}
-  table{width:100%;border-collapse:collapse;background:var(--card);
-    border:1px solid var(--line);border-radius:12px;overflow:hidden}
-  td{padding:15px 20px;border-top:1px solid var(--line);vertical-align:middle}
-  tr:first-child td{border-top:0}
-  .name{display:flex;align-items:center;gap:11px}
-  .name b{font-weight:600;font-size:15px;display:block}
-  .name em{font-style:normal;color:var(--muted);font-size:12.5px;display:block;margin-top:1px}
-  .dot{width:9px;height:9px;border-radius:50%;flex:0 0 9px;background:var(--pending)}
-  .dot.up{background:var(--up)} .dot.down{background:var(--down)}
-  .state{text-align:right;font-size:13.5px;font-weight:500;color:var(--muted);white-space:nowrap}
-  .state.up{color:var(--up)} .state.down{color:var(--down)}
-  footer{margin-top:24px;color:var(--muted);font-size:12.5px;line-height:1.8}
+    line-height:1.55;-webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:840px;margin:0 auto;padding:52px 20px 72px}
+
+  /* 헤더 */
+  header{margin-bottom:26px}
+  header h1{font-size:21px;margin:0 0 3px;letter-spacing:-.015em;font-weight:650}
+  header p{margin:0;color:var(--muted);font-size:13px}
+
+  /* 전체 상태 배너 */
+  .banner{
+    display:flex;align-items:center;gap:11px;
+    border:1px solid var(--line);background:var(--surface);
+    border-radius:10px;padding:17px 19px;margin-bottom:30px;
+  }
+  .banner .mark{width:10px;height:10px;border-radius:50%;flex:0 0 10px;background:var(--unknown)}
+  .banner .txt{font-size:16.5px;font-weight:600;letter-spacing:-.01em}
+  .banner.ok .mark{background:var(--ok)}       .banner.ok .txt{color:var(--ok)}
+  .banner.degraded .mark{background:var(--degraded)} .banner.degraded .txt{color:var(--degraded)}
+  .banner.partial .mark{background:var(--partial)}   .banner.partial .txt{color:var(--partial)}
+  .banner.major .mark{background:var(--major)}       .banner.major .txt{color:var(--major)}
+  .banner.unknown .txt{color:var(--muted)}
+
+  /* 컴포넌트 목록 — 카드 하나 안에 얇은 divider 로만 구분 */
+  .panel{border:1px solid var(--line);background:var(--surface);border-radius:10px;overflow:hidden}
+  .comp{padding:19px 20px 17px;border-top:1px solid var(--line-soft)}
+  .comp:first-child{border-top:0}
+  .comp-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-bottom:13px}
+  .comp-name{font-size:14.5px;font-weight:600;letter-spacing:-.005em}
+  .comp-desc{display:block;font-size:12.5px;color:var(--muted);font-weight:400;margin-top:1px;letter-spacing:0}
+  .comp-state{font-size:13px;font-weight:550;white-space:nowrap;color:var(--muted)}
+  .comp-state.ok{color:var(--ok)} .comp-state.degraded{color:var(--degraded)}
+  .comp-state.partial{color:var(--partial)} .comp-state.major{color:var(--major)}
+  .comp-uptime{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+  /* 90일 바 */
+  .bars{display:flex;gap:2px;height:30px;align-items:stretch}
+  .bar{flex:1 1 0;min-width:0;border-radius:2px;background:var(--unknown);transition:opacity .12s}
+  .bar.ok{background:var(--ok)} .bar.degraded{background:var(--degraded)}
+  .bar.partial{background:var(--partial)} .bar.major{background:var(--major)}
+  .bar:hover{opacity:.62}
+  .axis{display:flex;justify-content:space-between;margin-top:7px;font-size:11.5px;color:var(--faint)}
+  .axis .mid{color:var(--faint)}
+
+  /* 범례 */
+  .legend{display:flex;flex-wrap:wrap;gap:7px 18px;margin-top:16px;font-size:12px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:9px;height:9px;border-radius:2px;display:inline-block;background:var(--unknown)}
+  .legend i.ok{background:var(--ok)} .legend i.degraded{background:var(--degraded)}
+  .legend i.partial{background:var(--partial)} .legend i.major{background:var(--major)}
+
+  /* 인시던트 */
+  .section-title{font-size:15px;font-weight:650;margin:40px 0 14px;letter-spacing:-.01em}
+  .inc{padding:18px 0;border-top:1px solid var(--line)}
+  .inc:first-of-type{border-top:0;padding-top:4px}
+  .inc-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+  .inc-title{font-size:14.5px;font-weight:600;letter-spacing:-.005em}
+  .inc-badge{font-size:11.5px;font-weight:600;padding:2px 7px;border-radius:4px;
+    border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+  .inc-badge.major{color:var(--major);border-color:color-mix(in srgb,var(--major) 35%,transparent)}
+  .inc-badge.partial{color:var(--partial);border-color:color-mix(in srgb,var(--partial) 35%,transparent)}
+  .inc-badge.degraded{color:var(--degraded);border-color:color-mix(in srgb,var(--degraded) 35%,transparent)}
+  .inc-meta{font-size:12.5px;color:var(--muted);margin-bottom:10px}
+  .inc-updates{margin:0;padding:0;list-style:none}
+  .inc-updates li{padding:7px 0 7px 13px;border-left:2px solid var(--line);font-size:13px}
+  .inc-updates b{font-weight:600;font-size:12.5px;color:var(--fg);margin-right:7px}
+  .inc-updates time{color:var(--faint);font-size:12px;display:block;margin-top:2px;
+    font-variant-numeric:tabular-nums}
+  .empty{color:var(--muted);font-size:13px;padding:4px 0}
+
+  /* 안내·푸터 */
+  .note{margin-top:20px;color:var(--muted);font-size:12.5px;line-height:1.75}
+  footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--line);
+    color:var(--faint);font-size:12.5px;line-height:1.8}
   footer p{margin:0}
-  .note{margin-top:18px;padding:14px 16px;border:1px solid var(--line);border-radius:10px;
-    background:var(--card);color:var(--muted);font-size:12.5px}
+  footer a{color:var(--accent);text-decoration:none}
+  footer a:hover{text-decoration:underline}
+
+  @media (max-width:560px){
+    .wrap{padding:36px 16px 56px}
+    .comp{padding:16px 15px 14px}
+    .bars{height:26px;gap:1.5px}
+    .axis .mid{display:none}
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <h1>에그호스팅 서비스 상태</h1>
-    <span>egghosting.com</span>
+    <p>egghosting.com</p>
   </header>
 
-  <div class="banner pending" id="banner">불러오는 중…</div>
-  <table id="rows"></table>
+  <div class="banner unknown" id="banner">
+    <span class="mark"></span><span class="txt">불러오는 중</span>
+  </div>
+
+  <div class="panel" id="panel"></div>
+
+  <div class="legend">
+    <span><i class="ok"></i>정상</span>
+    <span><i class="degraded"></i>성능 저하</span>
+    <span><i class="partial"></i>부분 장애</span>
+    <span><i class="major"></i>전체 장애</span>
+    <span><i></i>측정 없음</span>
+  </div>
 
   <div class="note">
     이 페이지는 <b>플랫폼 컴포넌트의 상태</b>이며, 개별 서비스의 상태가 아닙니다.
     내 서비스 상태는 관리 콘솔에서 확인해 주세요.
   </div>
+
+  <h2 class="section-title">지난 인시던트</h2>
+  <div id="incidents"><p class="empty">불러오는 중</p></div>
 
   <footer>
     <p id="checked">—</p>
@@ -66,60 +150,177 @@
 </div>
 
 <script>
-const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c =>
-  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+/* ─────────────────────────────────────────────────────────────
+   가동률(%) 숫자 공개 스위치.
 
-// KST 표기. 저장은 UTC ISO 라 표시할 때만 9시간 더한다.
-function fmtKst(iso){
-  const d = new Date(new Date(iso).getTime() + 9*3600*1000);
-  const p = n => String(n).padStart(2,'0');
-  return `${d.getUTCFullYear()}-${p(d.getUTCMonth()+1)}-${p(d.getUTCDate())} `
-       + `${p(d.getUTCHours())}:${p(d.getUTCMinutes())} KST`;
+   false 로 두면 90일 바는 그리되 "99.87%" 같은 숫자는 표시하지 않는다.
+   2026-08-19 결정: 수집은 계속하되 숫자는 공개하지 않는다. 유료 MRR 의 79%가
+   단일 고객(전용서버)이라, 보상 기준을 문서로 정하기 전에 가동률을 숫자로
+   내걸면 사실상 SLA 를 약속하는 것이 되기 때문이다.
+   기준이 문서화되면 이 값만 true 로 바꾸면 된다.
+   ───────────────────────────────────────────────────────────── */
+const SHOW_UPTIME = false;
+
+const DAYS = 90;
+
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+/* 저장은 UTC ISO. 표시할 때만 KST 로 옮긴다. */
+function kst(iso) {
+  const d = new Date(new Date(iso).getTime() + 9 * 3600 * 1000);
+  const p = (n) => String(n).padStart(2, '0');
+  return {
+    date: `${d.getUTCFullYear()}-${p(d.getUTCMonth() + 1)}-${p(d.getUTCDate())}`,
+    time: `${p(d.getUTCHours())}:${p(d.getUTCMinutes())}`,
+  };
+}
+const fmtKst = (iso) => { const k = kst(iso); return `${k.date} ${k.time} KST`; };
+
+/* 오늘부터 거꾸로 DAYS 일치 날짜 키(KST 기준)를 만든다. probe.mjs 의 dayKey 와 같은 규칙. */
+function dayKeys(n) {
+  const out = [];
+  const nowKst = new Date(Date.now() + 9 * 3600 * 1000);
+  for (let i = n - 1; i >= 0; i--) {
+    const d = new Date(nowKst.getTime() - i * 86400000);
+    const p = (x) => String(x).padStart(2, '0');
+    out.push(`${d.getUTCFullYear()}-${p(d.getUTCMonth() + 1)}-${p(d.getUTCDate())}`);
+  }
+  return out;
 }
 
-function render(state){
-  const comps = state.components || [];
-  const down = comps.filter(c => !c.up);
-  const overall = comps.length === 0
-    ? {cls:'pending', text:'측정 준비 중'}
-    : down.length === 0
-      ? {cls:'up', text:'모든 시스템 정상'}
-      : down.length === comps.length
-        ? {cls:'down', text:'전체 장애'}
-        : {cls:'partial', text:`일부 시스템 장애 (${down.length}건)`};
+/* 하루치 집계를 상태 등급으로 접는다. 등급 경계는 Statuspage 관행을 따랐다. */
+function grade(cell) {
+  if (!cell || !cell.total) return { cls: '', label: '측정 없음' };
+  const r = cell.ok / cell.total;
+  if (r >= 1) return { cls: 'ok', label: '정상' };
+  if (r >= 0.95) return { cls: 'degraded', label: '성능 저하' };
+  if (r >= 0.5) return { cls: 'partial', label: '부분 장애' };
+  return { cls: 'major', label: '전체 장애' };
+}
 
-  const banner = document.getElementById('banner');
-  banner.className = 'banner ' + overall.cls;
-  banner.textContent = overall.text;
-
-  document.getElementById('rows').innerHTML = comps.map(c => {
-    const cls = c.up ? 'up' : 'down';
-    return `<tr>
-      <td class="name"><span class="dot ${cls}"></span><span>
-        <b>${esc(c.name)}</b><em>${esc(c.desc)}</em></span></td>
-      <td class="state ${cls}">${c.up ? '정상' : '장애'}</td>
-    </tr>`;
+function renderBars(perDay, startedAt) {
+  return dayKeys(DAYS).map((key) => {
+    const cell = perDay[key];
+    const g = grade(cell);
+    /* 측정 시작 전 날짜와, 측정은 하는데 데이터가 없는 날을 구분해 알려준다. */
+    const why = cell ? g.label : (startedAt && key < startedAt ? '측정 시작 전' : '측정 없음');
+    /* 숫자 비공개일 때는 툴팁에도 ok/total 을 넣지 않는다. */
+    const detail = SHOW_UPTIME && cell ? ` (${cell.ok}/${cell.total})` : '';
+    return `<div class="bar ${g.cls}" title="${esc(key)} · ${esc(why)}${esc(detail)}"></div>`;
   }).join('');
+}
 
+function uptimeText(perDay) {
+  let ok = 0, total = 0;
+  for (const key of dayKeys(DAYS)) {
+    const c = perDay[key];
+    if (!c || !c.total) continue;
+    ok += c.ok; total += c.total;
+  }
+  if (!total) return '';
+  const pct = (ok / total) * 100;
+  return `최근 ${DAYS}일 ${pct >= 99.995 ? '100' : pct.toFixed(2)}%`;
+}
+
+function renderComponents(state) {
+  const comps = state.components || [];
+  const daily = state.daily || {};
+
+  document.getElementById('panel').innerHTML = comps.map((c) => {
+    const perDay = daily[c.id] || {};
+    const cls = c.up ? 'ok' : 'major';
+    const right = SHOW_UPTIME
+      ? `<span class="comp-uptime">${esc(uptimeText(perDay))}</span>`
+      : `<span class="comp-state ${cls}">${c.up ? '정상' : '장애'}</span>`;
+
+    return `<div class="comp">
+      <div class="comp-head">
+        <span class="comp-name">${esc(c.name)}<span class="comp-desc">${esc(c.desc)}</span></span>
+        ${right}
+      </div>
+      <div class="bars" role="img" aria-label="${esc(c.name)} 최근 ${DAYS}일 상태">
+        ${renderBars(perDay, state.startedAt)}
+      </div>
+      <div class="axis"><span>${DAYS}일 전</span><span class="mid">${Math.floor(DAYS / 2)}일 전</span><span>오늘</span></div>
+    </div>`;
+  }).join('');
+}
+
+function renderBanner(state) {
+  const comps = state.components || [];
+  const down = comps.filter((c) => !c.up);
+  const o = comps.length === 0 ? { cls: 'unknown', text: '측정 준비 중' }
+    : down.length === 0 ? { cls: 'ok', text: '모든 시스템 정상' }
+    : down.length === comps.length ? { cls: 'major', text: '전체 시스템 장애' }
+    : { cls: 'partial', text: `일부 시스템 장애 · ${down.length}건` };
+
+  const b = document.getElementById('banner');
+  b.className = 'banner ' + o.cls;
+  b.querySelector('.txt').textContent = o.text;
+}
+
+const INC_IMPACT = { major: '전체 장애', partial: '부분 장애', degraded: '성능 저하', none: '정보' };
+const INC_STAGE = { investigating: '원인 확인 중', identified: '원인 파악', monitoring: '경과 관찰', resolved: '해결' };
+
+function renderIncidents(list) {
+  const el = document.getElementById('incidents');
+  if (!Array.isArray(list) || list.length === 0) {
+    el.innerHTML = `<p class="empty">공개된 인시던트가 없습니다.</p>`;
+    return;
+  }
+  const sorted = [...list].sort((a, b) => String(b.startedAt).localeCompare(String(a.startedAt)));
+  el.innerHTML = sorted.map((inc) => {
+    const impact = INC_IMPACT[inc.impact] || '정보';
+    const period = inc.resolvedAt
+      ? `${fmtKst(inc.startedAt)} ~ ${kst(inc.resolvedAt).time} KST`
+      : `${fmtKst(inc.startedAt)} 시작 · 진행 중`;
+    const updates = (inc.updates || []).map((u) => `<li>
+        <b>${esc(INC_STAGE[u.status] || u.status || '')}</b>${esc(u.body || '')}
+        <time>${esc(fmtKst(u.at))}</time>
+      </li>`).join('');
+    return `<div class="inc">
+      <div class="inc-head">
+        <span class="inc-title">${esc(inc.title)}</span>
+        <span class="inc-badge ${esc(inc.impact || '')}">${esc(impact)}</span>
+      </div>
+      <div class="inc-meta">${esc(period)}</div>
+      <ul class="inc-updates">${updates}</ul>
+    </div>`;
+  }).join('');
+}
+
+function renderFooter(state) {
   document.getElementById('checked').textContent =
-    `마지막 점검 ${state.updatedAt ? fmtKst(state.updatedAt) : '—'} · 10분 간격 자동 점검`;
+    `마지막 점검 ${state.updatedAt ? fmtKst(state.updatedAt) : '—'}`;
   document.getElementById('meta').textContent =
     '점검은 에그호스팅 인프라 외부에서 수행됩니다'
     + (state.startedAt ? ` · 측정 시작 ${state.startedAt}` : '');
 }
 
-// 캐시를 타면 옛 상태를 보여주게 되어 페이지의 존재 이유가 사라진다.
-fetch('./state.json', {cache:'no-store'})
-  .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
-  .then(render)
-  .catch(() => {
-    const b = document.getElementById('banner');
-    b.className = 'banner pending';
-    b.textContent = '상태를 불러올 수 없습니다';
-  });
+/* 캐시를 타면 옛 상태를 보여주게 되어 이 페이지의 존재 이유가 사라진다. */
+const noStore = { cache: 'no-store' };
 
-// 페이지를 열어둔 채로도 갱신되도록.
-setInterval(() => location.reload(), 120000);
+function load() {
+  fetch('./state.json', noStore)
+    .then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then((state) => { renderBanner(state); renderComponents(state); renderFooter(state); })
+    .catch(() => {
+      const b = document.getElementById('banner');
+      b.className = 'banner unknown';
+      b.querySelector('.txt').textContent = '상태를 불러올 수 없습니다';
+    });
+
+  /* 인시던트는 사람이 쓰는 파일이라 없을 수도 있다. 없으면 조용히 빈 목록으로 둔다. */
+  fetch('./incidents.json', noStore)
+    .then((r) => (r.ok ? r.json() : []))
+    .then(renderIncidents)
+    .catch(() => renderIncidents([]));
+}
+
+load();
+/* 페이지를 열어둔 채로도 갱신되도록. 전체 새로고침 대신 데이터만 다시 읽는다. */
+setInterval(load, 120000);
 </script>
 </body>
 </html>
