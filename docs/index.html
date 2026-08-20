@@ -83,8 +83,9 @@
     transition:opacity .1s,transform .1s;transform-origin:center bottom}
   .seg.degraded{background:var(--degraded)} .seg.partial{background:var(--partial)}
   .seg.major{background:var(--major)}
-  /* 측정 전·측정 없음은 "장애"로 오독되지 않도록 옅은 띠로만 표시한다. */
-  .seg.nodata{background:var(--nodata);align-self:center;height:9px;border-radius:1.5px}
+  /* 측정 전·측정 없음. status.claude.com 처럼 높이는 같게 두고 색만 옅게 한다.
+     높이를 낮추면 칸마다 길이가 달라 보여 오히려 눈에 걸린다. */
+  .seg.nodata{background:var(--nodata)}
   .seg:hover{opacity:.6}
   .axis{display:flex;justify-content:space-between;margin-top:7px;font-size:11.5px;color:var(--faint)}
   .axis .uptime{color:var(--muted);font-variant-numeric:tabular-nums}
