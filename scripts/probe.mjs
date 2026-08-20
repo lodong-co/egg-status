@@ -131,3 +131,67 @@ await writeFile(STATE_PATH, JSON.stringify(state, null, 2) + '\n', 'utf8');
 for (const c of components) {
   console.log(`${c.up ? 'UP  ' : 'DOWN'} ${c.id.padEnd(8)} ${String(c.statusCode ?? '-').padEnd(4)} ${c.latencyMs}ms ${c.error || ''}`);
 }
+
+/* ────────────────────────────────────────────────────────────────
+   RSS 피드 생성 — docs/incidents.json 을 읽어 docs/feed.xml 을 만든다.
+
+   페이지의 "알림 받기" 가 가리키는 대상이다. 우리는 메일·SMS 발송 인프라가
+   없으므로 구독 수단은 RSS 하나뿐이고, 그래서 이 파일은 반드시 있어야 한다.
+   인시던트가 없으면 항목 0개짜리 유효한 피드를 낸다(리더가 404 를 싫어한다).
+   내용이 안 바뀌면 파일을 다시 쓰지 않는다 — 불필요한 커밋을 막기 위해서다.
+   ──────────────────────────────────────────────────────────────── */
+
+const SITE = 'https://status.egghosting.com';
+const INCIDENTS_PATH = new URL('../docs/incidents.json', import.meta.url);
+const FEED_PATH = new URL('../docs/feed.xml', import.meta.url);
+
+const xmlEscape = (s) => String(s ?? '').replace(/[&<>"']/g, (c) =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' }[c]));
+
+async function writeFeed() {
+  let incidents = [];
+  try {
+    const parsed = JSON.parse(await readFile(INCIDENTS_PATH, 'utf8'));
+    if (Array.isArray(parsed)) incidents = parsed;
+  } catch {
+    // 파일이 없거나 깨졌으면 빈 피드로 둔다. 프로브 자체를 실패시키지는 않는다.
+  }
+
+  const items = [...incidents]
+    .sort((a, b) => String(b.startedAt).localeCompare(String(a.startedAt)))
+    .slice(0, 30)
+    .map((inc) => {
+      const updates = (inc.updates || [])
+        .map((u) => `${u.status || ''}: ${u.body || ''}`).join('\n');
+      const last = (inc.updates || [])[(inc.updates || []).length - 1];
+      const pub = new Date(inc.resolvedAt || last?.at || inc.startedAt).toUTCString();
+      // guid 는 안정적이어야 한다. 리더가 이 값으로 읽음 여부를 기억한다.
+      const guid = `${SITE}/#${inc.id || inc.startedAt}`;
+      return `    <item>
+      <title>${xmlEscape(inc.title)}</title>
+      <link>${xmlEscape(SITE)}</link>
+      <guid isPermaLink="false">${xmlEscape(guid)}</guid>
+      <pubDate>${pub}</pubDate>
+      <description>${xmlEscape(updates)}</description>
+    </item>`;
+    }).join('\n');
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>에그호스팅 서비스 상태</title>
+    <link>${SITE}</link>
+    <description>에그호스팅의 서비스 인시던트 공지</description>
+    <language>ko</language>
+${items}
+  </channel>
+</rss>
+`;
+
+  // 내용이 같으면 건드리지 않는다(빈 커밋으로 Pages 빌드를 낭비하지 않도록).
+  let before = null;
+  try { before = await readFile(FEED_PATH, 'utf8'); } catch { /* 첫 실행 */ }
+  if (before !== xml) await writeFile(FEED_PATH, xml, 'utf8');
+}
+
+await writeFeed();

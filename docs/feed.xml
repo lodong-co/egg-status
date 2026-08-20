@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>에그호스팅 서비스 상태</title>
+    <link>https://status.egghosting.com</link>
+    <description>에그호스팅의 서비스 인시던트 공지</description>
+    <language>ko</language>
+
+  </channel>
+</rss>

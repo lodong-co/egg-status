@@ -8,19 +8,24 @@
 <meta property="og:title" content="에그호스팅 서비스 상태">
 <meta property="og:description" content="서비스별 운영 상태를 에그호스팅 인프라 외부에서 측정해 공개합니다.">
 <meta property="og:type" content="website">
+<link rel="alternate" type="application/rss+xml" title="에그호스팅 서비스 상태" href="./feed.xml">
 <style>
   :root{
     --bg:#f7f8fa; --surface:#fff; --line:#e4e7ec; --line-soft:#eef0f4;
     --fg:#101828; --muted:#667085; --faint:#98a2b3;
     --accent:#0891b2;
-    --ok:#12a150; --degraded:#d9a209; --partial:#e2680f; --major:#d92d20; --unknown:#d7dae0;
+    --ok:#12a150; --degraded:#d9a209; --partial:#e2680f; --major:#d92d20;
+    --nodata:#e7eaee;
+    --tip-bg:#1d2530; --tip-fg:#eef2f6; --tip-muted:#a7b2be; --tip-line:#333d4b;
   }
   @media (prefers-color-scheme:dark){
     :root{
       --bg:#0f1115; --surface:#161a21; --line:#252b35; --line-soft:#1e232b;
       --fg:#e6edf3; --muted:#93a0ae; --faint:#6b7885;
       --accent:#22d3ee;
-      --ok:#2ea86a; --degraded:#c99a12; --partial:#d4711d; --major:#e05353; --unknown:#2b313a;
+      --ok:#2ea86a; --degraded:#c99a12; --partial:#d4711d; --major:#e05353;
+      --nodata:#232830;
+      --tip-bg:#252b35; --tip-fg:#e6edf3; --tip-muted:#93a0ae; --tip-line:#39414d;
     }
   }
   *{box-sizing:border-box}
@@ -30,75 +35,106 @@
     font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
     line-height:1.55;-webkit-font-smoothing:antialiased;
   }
-  .wrap{max-width:840px;margin:0 auto;padding:52px 20px 72px}
+  .wrap{max-width:860px;margin:0 auto;padding:48px 20px 72px}
 
-  /* 헤더 */
-  header{margin-bottom:26px}
+  /* 헤더 · 구독 */
+  header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;
+    flex-wrap:wrap;margin-bottom:26px}
   header h1{font-size:21px;margin:0 0 3px;letter-spacing:-.015em;font-weight:650}
   header p{margin:0;color:var(--muted);font-size:13px}
+  .subscribe{position:relative}
+  .sub-btn{font:inherit;font-size:13px;font-weight:550;color:var(--fg);cursor:pointer;
+    background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:8px 14px}
+  .sub-btn:hover{background:var(--line-soft)}
+  .sub-panel{position:absolute;right:0;top:calc(100% + 7px);width:272px;z-index:20;
+    background:var(--surface);border:1px solid var(--line);border-radius:9px;
+    padding:15px 16px;box-shadow:0 8px 24px rgba(16,24,40,.10);display:none}
+  .sub-panel.open{display:block}
+  .sub-panel p{margin:0 0 10px;font-size:12.5px;color:var(--muted);line-height:1.65}
+  .sub-panel a{display:inline-block;font-size:13px;color:var(--accent);text-decoration:none;font-weight:550}
+  .sub-panel a:hover{text-decoration:underline}
 
   /* 전체 상태 배너 */
-  .banner{
-    display:flex;align-items:center;gap:11px;
+  .banner{display:flex;align-items:center;gap:11px;
     border:1px solid var(--line);background:var(--surface);
-    border-radius:10px;padding:17px 19px;margin-bottom:30px;
-  }
-  .banner .mark{width:10px;height:10px;border-radius:50%;flex:0 0 10px;background:var(--unknown)}
+    border-radius:10px;padding:17px 19px;margin-bottom:28px}
+  .banner .mark{width:10px;height:10px;border-radius:50%;flex:0 0 10px;background:var(--nodata)}
   .banner .txt{font-size:16.5px;font-weight:600;letter-spacing:-.01em}
-  .banner.ok .mark{background:var(--ok)}       .banner.ok .txt{color:var(--ok)}
+  .banner.ok .mark{background:var(--ok)}             .banner.ok .txt{color:var(--ok)}
   .banner.degraded .mark{background:var(--degraded)} .banner.degraded .txt{color:var(--degraded)}
   .banner.partial .mark{background:var(--partial)}   .banner.partial .txt{color:var(--partial)}
   .banner.major .mark{background:var(--major)}       .banner.major .txt{color:var(--major)}
   .banner.unknown .txt{color:var(--muted)}
 
-  /* 컴포넌트 목록 — 카드 하나 안에 얇은 divider 로만 구분 */
+  /* 컴포넌트 — 카드 하나 안에서 얇은 divider 로만 구분 */
   .panel{border:1px solid var(--line);background:var(--surface);border-radius:10px;overflow:hidden}
-  .comp{padding:19px 20px 17px;border-top:1px solid var(--line-soft)}
+  .comp{padding:19px 20px 16px;border-top:1px solid var(--line-soft)}
   .comp:first-child{border-top:0}
-  .comp-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-bottom:13px}
+  .comp-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-bottom:12px}
   .comp-name{font-size:14.5px;font-weight:600;letter-spacing:-.005em}
   .comp-desc{display:block;font-size:12.5px;color:var(--muted);font-weight:400;margin-top:1px;letter-spacing:0}
   .comp-state{font-size:13px;font-weight:550;white-space:nowrap;color:var(--muted)}
   .comp-state.ok{color:var(--ok)} .comp-state.degraded{color:var(--degraded)}
   .comp-state.partial{color:var(--partial)} .comp-state.major{color:var(--major)}
-  .comp-uptime{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
 
   /* 90일 바 */
-  .bars{display:flex;gap:2px;height:30px;align-items:stretch}
-  .bar{flex:1 1 0;min-width:0;border-radius:2px;background:var(--unknown);transition:opacity .12s}
-  .bar.ok{background:var(--ok)} .bar.degraded{background:var(--degraded)}
-  .bar.partial{background:var(--partial)} .bar.major{background:var(--major)}
-  .bar:hover{opacity:.62}
+  .bars{display:flex;gap:2px;height:32px;align-items:stretch}
+  .seg{flex:1 1 0;min-width:0;border-radius:2px;background:var(--ok);cursor:default;
+    transition:opacity .1s,transform .1s;transform-origin:center bottom}
+  .seg.degraded{background:var(--degraded)} .seg.partial{background:var(--partial)}
+  .seg.major{background:var(--major)}
+  /* 측정 전·측정 없음은 "장애"로 오독되지 않도록 옅은 띠로만 표시한다. */
+  .seg.nodata{background:var(--nodata);align-self:center;height:9px;border-radius:1.5px}
+  .seg:hover{opacity:.6}
   .axis{display:flex;justify-content:space-between;margin-top:7px;font-size:11.5px;color:var(--faint)}
-  .axis .mid{color:var(--faint)}
+  .axis .uptime{color:var(--muted);font-variant-numeric:tabular-nums}
 
   /* 범례 */
   .legend{display:flex;flex-wrap:wrap;gap:7px 18px;margin-top:16px;font-size:12px;color:var(--muted)}
   .legend span{display:inline-flex;align-items:center;gap:6px}
-  .legend i{width:9px;height:9px;border-radius:2px;display:inline-block;background:var(--unknown)}
+  .legend i{width:9px;height:9px;border-radius:2px;display:inline-block;background:var(--nodata)}
   .legend i.ok{background:var(--ok)} .legend i.degraded{background:var(--degraded)}
   .legend i.partial{background:var(--partial)} .legend i.major{background:var(--major)}
 
-  /* 인시던트 */
-  .section-title{font-size:15px;font-weight:650;margin:40px 0 14px;letter-spacing:-.01em}
-  .inc{padding:18px 0;border-top:1px solid var(--line)}
-  .inc:first-of-type{border-top:0;padding-top:4px}
-  .inc-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:4px}
-  .inc-title{font-size:14.5px;font-weight:600;letter-spacing:-.005em}
-  .inc-badge{font-size:11.5px;font-weight:600;padding:2px 7px;border-radius:4px;
+  /* 호버 툴팁 */
+  #tip{position:fixed;z-index:60;pointer-events:none;opacity:0;transition:opacity .1s;
+    background:var(--tip-bg);color:var(--tip-fg);border-radius:8px;padding:10px 13px;
+    font-size:12.5px;line-height:1.6;max-width:270px;
+    box-shadow:0 6px 20px rgba(16,24,40,.22)}
+  #tip.show{opacity:1}
+  #tip .t-date{font-weight:650;font-size:12.5px;margin-bottom:3px}
+  #tip .t-state{display:flex;align-items:center;gap:6px;font-weight:550}
+  #tip .t-state i{width:8px;height:8px;border-radius:2px;display:inline-block;background:var(--nodata)}
+  #tip .t-state i.ok{background:var(--ok)} #tip .t-state i.degraded{background:var(--degraded)}
+  #tip .t-state i.partial{background:var(--partial)} #tip .t-state i.major{background:var(--major)}
+  #tip .t-sub{color:var(--tip-muted);font-size:12px;margin-top:2px}
+  #tip .t-inc{margin-top:8px;padding-top:8px;border-top:1px solid var(--tip-line);font-size:12px}
+  #tip .t-inc b{display:block;font-weight:600;margin-bottom:1px}
+  #tip .t-inc span{color:var(--tip-muted)}
+
+  /* 인시던트 이력 */
+  .section-title{font-size:15px;font-weight:650;margin:40px 0 6px;letter-spacing:-.01em}
+  .section-sub{margin:0 0 16px;font-size:12.5px;color:var(--muted)}
+  .day{padding:16px 0;border-top:1px solid var(--line)}
+  .day:first-of-type{border-top:0}
+  .day-date{font-size:13px;font-weight:650;color:var(--fg);margin-bottom:8px}
+  .day-none{font-size:13px;color:var(--faint)}
+  .inc{margin-top:12px}
+  .inc:first-of-type{margin-top:0}
+  .inc-head{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin-bottom:3px}
+  .inc-title{font-size:14px;font-weight:600;letter-spacing:-.005em}
+  .inc-badge{font-size:11.5px;font-weight:600;padding:1px 7px;border-radius:4px;
     border:1px solid var(--line);color:var(--muted);white-space:nowrap}
   .inc-badge.major{color:var(--major);border-color:color-mix(in srgb,var(--major) 35%,transparent)}
   .inc-badge.partial{color:var(--partial);border-color:color-mix(in srgb,var(--partial) 35%,transparent)}
   .inc-badge.degraded{color:var(--degraded);border-color:color-mix(in srgb,var(--degraded) 35%,transparent)}
-  .inc-meta{font-size:12.5px;color:var(--muted);margin-bottom:10px}
+  .inc-scope{font-size:12.5px;color:var(--muted);margin-bottom:8px}
   .inc-updates{margin:0;padding:0;list-style:none}
-  .inc-updates li{padding:7px 0 7px 13px;border-left:2px solid var(--line);font-size:13px}
-  .inc-updates b{font-weight:600;font-size:12.5px;color:var(--fg);margin-right:7px}
+  .inc-updates li{padding:6px 0 6px 13px;border-left:2px solid var(--line);font-size:13px}
+  .inc-updates b{font-weight:600;font-size:12.5px;margin-right:7px}
   .inc-updates time{color:var(--faint);font-size:12px;display:block;margin-top:2px;
     font-variant-numeric:tabular-nums}
-  .empty{color:var(--muted);font-size:13px;padding:4px 0}
 
-  /* 안내·푸터 */
   .note{margin-top:20px;color:var(--muted);font-size:12.5px;line-height:1.75}
   footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--line);
     color:var(--faint);font-size:12.5px;line-height:1.8}
@@ -107,18 +143,28 @@
   footer a:hover{text-decoration:underline}
 
   @media (max-width:560px){
-    .wrap{padding:36px 16px 56px}
-    .comp{padding:16px 15px 14px}
-    .bars{height:26px;gap:1.5px}
+    .wrap{padding:34px 15px 56px}
+    .comp{padding:16px 14px 13px}
+    .bars{height:28px;gap:1.5px}
     .axis .mid{display:none}
+    #tip{max-width:220px}
   }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1>에그호스팅 서비스 상태</h1>
-    <p>egghosting.com</p>
+    <div>
+      <h1>에그호스팅 서비스 상태</h1>
+      <p>egghosting.com</p>
+    </div>
+    <div class="subscribe">
+      <button class="sub-btn" id="subBtn" aria-expanded="false">알림 받기</button>
+      <div class="sub-panel" id="subPanel">
+        <p>RSS 리더에 아래 주소를 등록하면 인시던트가 올라올 때 알림을 받을 수 있습니다.</p>
+        <a href="./feed.xml" id="feedLink">RSS 피드 열기</a>
+      </div>
+    </div>
   </header>
 
   <div class="banner unknown" id="banner">
@@ -141,7 +187,8 @@
   </div>
 
   <h2 class="section-title">지난 인시던트</h2>
-  <div id="incidents"><p class="empty">불러오는 중</p></div>
+  <p class="section-sub" id="incSub">최근 14일</p>
+  <div id="incidents"></div>
 
   <footer>
     <p id="checked">—</p>
@@ -149,19 +196,25 @@
   </footer>
 </div>
 
+<div id="tip" role="tooltip"></div>
+
 <script>
 /* ─────────────────────────────────────────────────────────────
    가동률(%) 숫자 공개 스위치.
 
-   false 로 두면 90일 바는 그리되 "99.87%" 같은 숫자는 표시하지 않는다.
-   2026-08-19 결정: 수집은 계속하되 숫자는 공개하지 않는다. 유료 MRR 의 79%가
-   단일 고객(전용서버)이라, 보상 기준을 문서로 정하기 전에 가동률을 숫자로
-   내걸면 사실상 SLA 를 약속하는 것이 되기 때문이다.
-   기준이 문서화되면 이 값만 true 로 바꾸면 된다.
-   ───────────────────────────────────────────────────────────── */
-const SHOW_UPTIME = false;
+   false 로 두면 90일 바는 그리되 "99.87%" 같은 숫자와 다운타임 시간을
+   표시하지 않는다.
 
-const DAYS = 90;
+   2026-08-19 에는 "수집만 하고 비공개"로 정했었다. 유료 MRR 의 79%가 단일
+   고객(전용서버)이라, 보상 기준을 문서로 정하기 전에 가동률을 숫자로 내걸면
+   사실상 SLA 를 약속하는 것이 되기 때문이다.
+   지금 true 인 것은 status.claude.com 과 같은 형태를 요청받았기 때문이며,
+   보상 기준 문서가 아직 없다는 사실은 그대로다. 되돌리려면 이 값만 false 로.
+   ───────────────────────────────────────────────────────────── */
+const SHOW_UPTIME = true;
+
+const DAYS = 90;          // 바에 표시할 일수. status.claude.com 과 동일.
+const INCIDENT_DAYS = 14; // "지난 인시던트" 에서 날짜별로 훑을 일수.
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -171,27 +224,33 @@ function kst(iso) {
   const d = new Date(new Date(iso).getTime() + 9 * 3600 * 1000);
   const p = (n) => String(n).padStart(2, '0');
   return {
-    date: `${d.getUTCFullYear()}-${p(d.getUTCMonth() + 1)}-${p(d.getUTCDate())}`,
+    key: `${d.getUTCFullYear()}-${p(d.getUTCMonth() + 1)}-${p(d.getUTCDate())}`,
     time: `${p(d.getUTCHours())}:${p(d.getUTCMinutes())}`,
   };
 }
-const fmtKst = (iso) => { const k = kst(iso); return `${k.date} ${k.time} KST`; };
+const fmtKst = (iso) => { const k = kst(iso); return `${k.key} ${k.time} KST`; };
 
-/* 오늘부터 거꾸로 DAYS 일치 날짜 키(KST 기준)를 만든다. probe.mjs 의 dayKey 와 같은 규칙. */
+/* "2026-08-01" → "2026년 8월 1일" */
+function longDate(key) {
+  const [y, m, d] = key.split('-');
+  return `${y}년 ${Number(m)}월 ${Number(d)}일`;
+}
+
+/* 오늘부터 거꾸로 n일치 날짜 키(KST). probe.mjs 의 dayKey 와 같은 규칙. */
 function dayKeys(n) {
   const out = [];
   const nowKst = new Date(Date.now() + 9 * 3600 * 1000);
+  const p = (x) => String(x).padStart(2, '0');
   for (let i = n - 1; i >= 0; i--) {
     const d = new Date(nowKst.getTime() - i * 86400000);
-    const p = (x) => String(x).padStart(2, '0');
     out.push(`${d.getUTCFullYear()}-${p(d.getUTCMonth() + 1)}-${p(d.getUTCDate())}`);
   }
   return out;
 }
 
-/* 하루치 집계를 상태 등급으로 접는다. 등급 경계는 Statuspage 관행을 따랐다. */
+/* 하루치 집계를 상태 등급으로 접는다. 경계는 Statuspage 관행. */
 function grade(cell) {
-  if (!cell || !cell.total) return { cls: '', label: '측정 없음' };
+  if (!cell || !cell.total) return { cls: 'nodata', label: '측정 없음' };
   const r = cell.ok / cell.total;
   if (r >= 1) return { cls: 'ok', label: '정상' };
   if (r >= 0.95) return { cls: 'degraded', label: '성능 저하' };
@@ -199,16 +258,16 @@ function grade(cell) {
   return { cls: 'major', label: '전체 장애' };
 }
 
-function renderBars(perDay, startedAt) {
-  return dayKeys(DAYS).map((key) => {
-    const cell = perDay[key];
-    const g = grade(cell);
-    /* 측정 시작 전 날짜와, 측정은 하는데 데이터가 없는 날을 구분해 알려준다. */
-    const why = cell ? g.label : (startedAt && key < startedAt ? '측정 시작 전' : '측정 없음');
-    /* 숫자 비공개일 때는 툴팁에도 ok/total 을 넣지 않는다. */
-    const detail = SHOW_UPTIME && cell ? ` (${cell.ok}/${cell.total})` : '';
-    return `<div class="bar ${g.cls}" title="${esc(key)} · ${esc(why)}${esc(detail)}"></div>`;
-  }).join('');
+/* 실패한 점검 비율을 하루(24h)에 대입한 근사치. 점검 간격이 일정하지 않아
+   정확한 값이 아니므로 "약" 을 붙여 표시한다. */
+function downtimeText(cell) {
+  if (!cell || !cell.total) return '';
+  const fail = cell.total - cell.ok;
+  if (fail <= 0) return '기록된 다운타임 없음';
+  const mins = Math.round((fail / cell.total) * 1440);
+  if (mins < 60) return `다운타임 약 ${mins}분`;
+  const h = Math.floor(mins / 60), m = mins % 60;
+  return m ? `다운타임 약 ${h}시간 ${m}분` : `다운타임 약 ${h}시간`;
 }
 
 function uptimeText(perDay) {
@@ -218,33 +277,107 @@ function uptimeText(perDay) {
     if (!c || !c.total) continue;
     ok += c.ok; total += c.total;
   }
-  if (!total) return '';
+  if (!total) return '측정 데이터 없음';
   const pct = (ok / total) * 100;
-  return `최근 ${DAYS}일 ${pct >= 99.995 ? '100' : pct.toFixed(2)}%`;
+  return `가동률 ${pct >= 99.995 ? '100' : pct.toFixed(2)}%`;
 }
 
+/* ── 인시던트를 (컴포넌트, 날짜) 로 색인해 툴팁에서 바로 찾도록 한다. ── */
+let INCIDENTS = [];
+let INC_INDEX = {};   // compId -> dayKey -> [{title, impact}]
+
+function buildIncidentIndex(list, componentIds) {
+  const idx = {};
+  for (const id of componentIds) idx[id] = {};
+  for (const inc of list) {
+    const targets = Array.isArray(inc.components) && inc.components.length
+      ? inc.components.filter((id) => idx[id]) : componentIds;
+    const from = kst(inc.startedAt).key;
+    const to = inc.resolvedAt ? kst(inc.resolvedAt).key : dayKeys(1)[0];
+    for (const id of targets) {
+      for (const key of dayKeys(DAYS)) {
+        if (key >= from && key <= to) (idx[id][key] = idx[id][key] || []).push(inc);
+      }
+    }
+  }
+  return idx;
+}
+
+/* ── 툴팁 ── */
+const tipEl = document.getElementById('tip');
+
+function tipHtml(compId, compName, key, cell, startedAt) {
+  const g = grade(cell);
+  const measured = !!(cell && cell.total);
+  const state = measured ? g.label : (startedAt && key < startedAt ? '측정 시작 전' : '측정 없음');
+  const sub = measured && SHOW_UPTIME ? downtimeText(cell)
+    : measured ? '' : '이 날짜는 아직 측정하지 않았습니다.';
+
+  const incs = (INC_INDEX[compId] || {})[key] || [];
+  const incHtml = incs.map((i) => `<div class="t-inc">
+      <b>${esc(i.title)}</b><span>${esc(compName)}</span></div>`).join('');
+
+  return `<div class="t-date">${esc(longDate(key))}</div>
+    <div class="t-state"><i class="${measured ? g.cls : ''}"></i>${esc(state)}</div>
+    ${sub ? `<div class="t-sub">${esc(sub)}</div>` : ''}
+    ${incHtml}`;
+}
+
+function showTip(target, html) {
+  tipEl.innerHTML = html;
+  tipEl.classList.add('show');
+  const r = target.getBoundingClientRect();
+  const t = tipEl.getBoundingClientRect();
+  let left = r.left + r.width / 2 - t.width / 2;
+  left = Math.max(10, Math.min(left, window.innerWidth - t.width - 10));
+  let top = r.top - t.height - 9;
+  if (top < 8) top = r.bottom + 9;   /* 위가 좁으면 아래로 뒤집는다 */
+  tipEl.style.left = left + 'px';
+  tipEl.style.top = top + 'px';
+}
+const hideTip = () => tipEl.classList.remove('show');
+
+/* ── 렌더 ── */
 function renderComponents(state) {
   const comps = state.components || [];
   const daily = state.daily || {};
+  const keys = dayKeys(DAYS);
 
   document.getElementById('panel').innerHTML = comps.map((c) => {
     const perDay = daily[c.id] || {};
     const cls = c.up ? 'ok' : 'major';
-    const right = SHOW_UPTIME
-      ? `<span class="comp-uptime">${esc(uptimeText(perDay))}</span>`
-      : `<span class="comp-state ${cls}">${c.up ? '정상' : '장애'}</span>`;
+    const segs = keys.map((key) => {
+      const cell = perDay[key];
+      const g = grade(cell);
+      return `<div class="seg ${g.cls}" data-comp="${esc(c.id)}" data-key="${esc(key)}"></div>`;
+    }).join('');
 
     return `<div class="comp">
       <div class="comp-head">
         <span class="comp-name">${esc(c.name)}<span class="comp-desc">${esc(c.desc)}</span></span>
-        ${right}
+        <span class="comp-state ${cls}">${c.up ? '정상' : '장애'}</span>
       </div>
-      <div class="bars" role="img" aria-label="${esc(c.name)} 최근 ${DAYS}일 상태">
-        ${renderBars(perDay, state.startedAt)}
+      <div class="bars">${segs}</div>
+      <div class="axis">
+        <span>${DAYS}일 전</span>
+        ${SHOW_UPTIME ? `<span class="uptime">최근 ${DAYS}일 ${esc(uptimeText(perDay))}</span>` : '<span></span>'}
+        <span>오늘</span>
       </div>
-      <div class="axis"><span>${DAYS}일 전</span><span class="mid">${Math.floor(DAYS / 2)}일 전</span><span>오늘</span></div>
     </div>`;
   }).join('');
+
+  /* 세그먼트가 많아 개별 리스너 대신 위임으로 처리한다. */
+  const panel = document.getElementById('panel');
+  panel.onmouseover = (e) => {
+    const seg = e.target.closest('.seg');
+    if (!seg) return;
+    const c = comps.find((x) => x.id === seg.dataset.comp);
+    if (!c) return;
+    const cell = (daily[c.id] || {})[seg.dataset.key];
+    showTip(seg, tipHtml(c.id, c.name, seg.dataset.key, cell, state.startedAt));
+  };
+  panel.onmouseout = (e) => { if (e.target.closest('.seg')) hideTip(); };
+  panel.onmouseleave = hideTip;
 }
 
 function renderBanner(state) {
@@ -254,7 +387,6 @@ function renderBanner(state) {
     : down.length === 0 ? { cls: 'ok', text: '모든 시스템 정상' }
     : down.length === comps.length ? { cls: 'major', text: '전체 시스템 장애' }
     : { cls: 'partial', text: `일부 시스템 장애 · ${down.length}건` };
-
   const b = document.getElementById('banner');
   b.className = 'banner ' + o.cls;
   b.querySelector('.txt').textContent = o.text;
@@ -263,31 +395,42 @@ function renderBanner(state) {
 const INC_IMPACT = { major: '전체 장애', partial: '부분 장애', degraded: '성능 저하', none: '정보' };
 const INC_STAGE = { investigating: '원인 확인 중', identified: '원인 파악', monitoring: '경과 관찰', resolved: '해결' };
 
-function renderIncidents(list) {
-  const el = document.getElementById('incidents');
-  if (!Array.isArray(list) || list.length === 0) {
-    el.innerHTML = `<p class="empty">공개된 인시던트가 없습니다.</p>`;
-    return;
-  }
-  const sorted = [...list].sort((a, b) => String(b.startedAt).localeCompare(String(a.startedAt)));
-  el.innerHTML = sorted.map((inc) => {
-    const impact = INC_IMPACT[inc.impact] || '정보';
-    const period = inc.resolvedAt
-      ? `${fmtKst(inc.startedAt)} ~ ${kst(inc.resolvedAt).time} KST`
-      : `${fmtKst(inc.startedAt)} 시작 · 진행 중`;
-    const updates = (inc.updates || []).map((u) => `<li>
-        <b>${esc(INC_STAGE[u.status] || u.status || '')}</b>${esc(u.body || '')}
-        <time>${esc(fmtKst(u.at))}</time>
-      </li>`).join('');
-    return `<div class="inc">
-      <div class="inc-head">
-        <span class="inc-title">${esc(inc.title)}</span>
-        <span class="inc-badge ${esc(inc.impact || '')}">${esc(impact)}</span>
-      </div>
-      <div class="inc-meta">${esc(period)}</div>
-      <ul class="inc-updates">${updates}</ul>
-    </div>`;
+/* status.claude.com 과 같은 형태 — 날짜별로 훑고, 조용한 날은 그렇다고 적는다. */
+function renderIncidents(state) {
+  const nameOf = {};
+  for (const c of state.components || []) nameOf[c.id] = c.name;
+  const today = dayKeys(1)[0];
+
+  const html = dayKeys(INCIDENT_DAYS).reverse().map((key) => {
+    const todays = INCIDENTS.filter((i) => kst(i.startedAt).key === key);
+    if (todays.length === 0) {
+      return `<div class="day"><div class="day-date">${esc(longDate(key))}</div>
+        <div class="day-none">보고된 인시던트 없음</div></div>`;
+    }
+    const items = todays.map((inc) => {
+      const impact = INC_IMPACT[inc.impact] || '정보';
+      const scope = (Array.isArray(inc.components) && inc.components.length)
+        ? inc.components.map((id) => nameOf[id] || id).join(' · ') : '전체';
+      const period = inc.resolvedAt
+        ? `${scope} · ${kst(inc.startedAt).time} ~ ${kst(inc.resolvedAt).time} KST`
+        : `${scope} · ${kst(inc.startedAt).time} KST 시작 · 진행 중`;
+      const updates = (inc.updates || []).map((u) => `<li>
+          <b>${esc(INC_STAGE[u.status] || u.status || '')}</b>${esc(u.body || '')}
+          <time>${esc(fmtKst(u.at))}</time></li>`).join('');
+      return `<div class="inc">
+        <div class="inc-head">
+          <span class="inc-title">${esc(inc.title)}</span>
+          <span class="inc-badge ${esc(inc.impact || '')}">${esc(impact)}</span>
+        </div>
+        <div class="inc-scope">${esc(period)}</div>
+        <ul class="inc-updates">${updates}</ul>
+      </div>`;
+    }).join('');
+    return `<div class="day"><div class="day-date">${esc(longDate(key))}${key === today ? ' (오늘)' : ''}</div>${items}</div>`;
   }).join('');
+
+  document.getElementById('incidents').innerHTML = html;
+  document.getElementById('incSub').textContent = `최근 ${INCIDENT_DAYS}일`;
 }
 
 function renderFooter(state) {
@@ -298,29 +441,49 @@ function renderFooter(state) {
     + (state.startedAt ? ` · 측정 시작 ${state.startedAt}` : '');
 }
 
-/* 캐시를 타면 옛 상태를 보여주게 되어 이 페이지의 존재 이유가 사라진다. */
+/* ── 구독 패널 ── */
+const subBtn = document.getElementById('subBtn');
+const subPanel = document.getElementById('subPanel');
+subBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  const open = subPanel.classList.toggle('open');
+  subBtn.setAttribute('aria-expanded', String(open));
+});
+document.addEventListener('click', () => {
+  subPanel.classList.remove('open');
+  subBtn.setAttribute('aria-expanded', 'false');
+});
+/* 상대경로 RSS 는 리더에 붙여넣기 어려우므로 절대주소로 바꿔준다. */
+document.getElementById('feedLink').href = new URL('./feed.xml', location.href).href;
+
+/* ── 로드 ── */
 const noStore = { cache: 'no-store' };
 
 function load() {
-  fetch('./state.json', noStore)
-    .then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-    .then((state) => { renderBanner(state); renderComponents(state); renderFooter(state); })
-    .catch(() => {
-      const b = document.getElementById('banner');
-      b.className = 'banner unknown';
-      b.querySelector('.txt').textContent = '상태를 불러올 수 없습니다';
-    });
-
-  /* 인시던트는 사람이 쓰는 파일이라 없을 수도 있다. 없으면 조용히 빈 목록으로 둔다. */
-  fetch('./incidents.json', noStore)
-    .then((r) => (r.ok ? r.json() : []))
-    .then(renderIncidents)
-    .catch(() => renderIncidents([]));
+  Promise.all([
+    fetch('./state.json', noStore).then((r) => {
+      if (!r.ok) throw new Error('HTTP ' + r.status); return r.json();
+    }),
+    /* 인시던트는 사람이 쓰는 파일이라 없을 수 있다. 없으면 조용히 빈 목록. */
+    fetch('./incidents.json', noStore).then((r) => (r.ok ? r.json() : [])).catch(() => []),
+  ]).then(([state, incidents]) => {
+    INCIDENTS = Array.isArray(incidents) ? incidents : [];
+    INC_INDEX = buildIncidentIndex(INCIDENTS, (state.components || []).map((c) => c.id));
+    renderBanner(state);
+    renderComponents(state);
+    renderIncidents(state);
+    renderFooter(state);
+  }).catch(() => {
+    const b = document.getElementById('banner');
+    b.className = 'banner unknown';
+    b.querySelector('.txt').textContent = '상태를 불러올 수 없습니다';
+  });
 }
 
 load();
-/* 페이지를 열어둔 채로도 갱신되도록. 전체 새로고침 대신 데이터만 다시 읽는다. */
+/* 열어둔 채로도 갱신되도록. 전체 새로고침 대신 데이터만 다시 읽는다. */
 setInterval(load, 120000);
+window.addEventListener('scroll', hideTip, { passive: true });
 </script>
 </body>
 </html>
