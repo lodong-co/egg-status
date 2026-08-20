@@ -110,8 +110,9 @@
   #tip .t-state i.partial{background:var(--partial)} #tip .t-state i.major{background:var(--major)}
   #tip .t-sub{color:var(--tip-muted);font-size:12px;margin-top:2px}
   #tip .t-inc{margin-top:8px;padding-top:8px;border-top:1px solid var(--tip-line);font-size:12px}
-  #tip .t-inc b{display:block;font-weight:600;margin-bottom:1px}
-  #tip .t-inc span{color:var(--tip-muted)}
+  #tip .t-inc .t-inc-h{display:block;color:var(--tip-muted);margin-bottom:3px}
+  #tip .t-inc b{display:block;font-weight:550;margin-bottom:2px;line-height:1.45}
+  #tip .t-inc b:last-child{margin-bottom:0}
 
   /* 인시던트 이력 */
   .section-title{font-size:15px;font-weight:650;margin:40px 0 6px;letter-spacing:-.01em}
@@ -120,16 +121,9 @@
   .day:first-of-type{border-top:0}
   .day-date{font-size:13px;font-weight:650;color:var(--fg);margin-bottom:8px}
   .day-none{font-size:13px;color:var(--faint)}
-  .inc{margin-top:12px}
+  .inc{margin-top:16px}
   .inc:first-of-type{margin-top:0}
-  .inc-head{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin-bottom:3px}
-  .inc-title{font-size:14px;font-weight:600;letter-spacing:-.005em}
-  .inc-badge{font-size:11.5px;font-weight:600;padding:1px 7px;border-radius:4px;
-    border:1px solid var(--line);color:var(--muted);white-space:nowrap}
-  .inc-badge.major{color:var(--major);border-color:color-mix(in srgb,var(--major) 35%,transparent)}
-  .inc-badge.partial{color:var(--partial);border-color:color-mix(in srgb,var(--partial) 35%,transparent)}
-  .inc-badge.degraded{color:var(--degraded);border-color:color-mix(in srgb,var(--degraded) 35%,transparent)}
-  .inc-scope{font-size:12.5px;color:var(--muted);margin-bottom:8px}
+  .inc-title{font-size:14px;font-weight:600;letter-spacing:-.005em;margin-bottom:7px}
   .inc-updates{margin:0;padding:0;list-style:none}
   .inc-updates li{padding:6px 0 6px 13px;border-left:2px solid var(--line);font-size:13px}
   .inc-updates b{font-weight:600;font-size:12.5px;margin-right:7px}
@@ -215,7 +209,7 @@
 const SHOW_UPTIME = true;
 
 const DAYS = 90;          // 바에 표시할 일수. status.claude.com 과 동일.
-const INCIDENT_DAYS = 14; // "지난 인시던트" 에서 날짜별로 훑을 일수.
+const INCIDENT_DAYS = 15; // "지난 인시던트" 에서 날짜별로 훑을 일수. status.claude.com 과 동일.
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -307,16 +301,19 @@ function buildIncidentIndex(list, componentIds) {
 /* ── 툴팁 ── */
 const tipEl = document.getElementById('tip');
 
-function tipHtml(compId, compName, key, cell, startedAt) {
+function tipHtml(compId, key, cell, startedAt) {
   const g = grade(cell);
   const measured = !!(cell && cell.total);
   const state = measured ? g.label : (startedAt && key < startedAt ? '측정 시작 전' : '측정 없음');
   const sub = measured && SHOW_UPTIME ? downtimeText(cell)
     : measured ? '' : '이 날짜는 아직 측정하지 않았습니다.';
 
+  /* status.claude.com 은 "Related" 아래에 그날 걸린 인시던트 제목을 나열한다. */
   const incs = (INC_INDEX[compId] || {})[key] || [];
-  const incHtml = incs.map((i) => `<div class="t-inc">
-      <b>${esc(i.title)}</b><span>${esc(compName)}</span></div>`).join('');
+  const incHtml = incs.length
+    ? `<div class="t-inc"><span class="t-inc-h">관련</span>${
+        incs.map((i) => `<b>${esc(i.title)}</b>`).join('')}</div>`
+    : '';
 
   return `<div class="t-date">${esc(longDate(key))}</div>
     <div class="t-state"><i class="${measured ? g.cls : ''}"></i>${esc(state)}</div>
@@ -375,7 +372,7 @@ function renderComponents(state) {
     const c = comps.find((x) => x.id === seg.dataset.comp);
     if (!c) return;
     const cell = (daily[c.id] || {})[seg.dataset.key];
-    showTip(seg, tipHtml(c.id, c.name, seg.dataset.key, cell, state.startedAt));
+    showTip(seg, tipHtml(c.id, seg.dataset.key, cell, state.startedAt));
   };
   panel.onmouseout = (e) => { if (e.target.closest('.seg')) hideTip(); };
   panel.onmouseleave = hideTip;
@@ -393,41 +390,34 @@ function renderBanner(state) {
   b.querySelector('.txt').textContent = o.text;
 }
 
-const INC_IMPACT = { major: '전체 장애', partial: '부분 장애', degraded: '성능 저하', none: '정보' };
 const INC_STAGE = { investigating: '원인 확인 중', identified: '원인 파악', monitoring: '경과 관찰', resolved: '해결' };
 
-/* status.claude.com 과 같은 형태 — 날짜별로 훑고, 조용한 날은 그렇다고 적는다. */
-function renderIncidents(state) {
-  const nameOf = {};
-  for (const c of state.components || []) nameOf[c.id] = c.name;
+/* status.claude.com 과 같은 형태 — 날짜별로 훑고, 조용한 날은 그렇다고 적는다.
+   최신 날짜가 위로 오고, 한 인시던트 안에서는 최신 업데이트(해결)가 위로 온다. */
+function renderIncidents() {
   const today = dayKeys(1)[0];
 
   const html = dayKeys(INCIDENT_DAYS).reverse().map((key) => {
     const todays = INCIDENTS.filter((i) => kst(i.startedAt).key === key);
     if (todays.length === 0) {
-      return `<div class="day"><div class="day-date">${esc(longDate(key))}</div>
-        <div class="day-none">보고된 인시던트 없음</div></div>`;
+      return `<div class="day">
+        <div class="day-date">${esc(longDate(key))}</div>
+        <div class="day-none">${key === today ? '오늘은 보고된 인시던트가 없습니다.' : '보고된 인시던트가 없습니다.'}</div>
+      </div>`;
     }
     const items = todays.map((inc) => {
-      const impact = INC_IMPACT[inc.impact] || '정보';
-      const scope = (Array.isArray(inc.components) && inc.components.length)
-        ? inc.components.map((id) => nameOf[id] || id).join(' · ') : '전체';
-      const period = inc.resolvedAt
-        ? `${scope} · ${kst(inc.startedAt).time} ~ ${kst(inc.resolvedAt).time} KST`
-        : `${scope} · ${kst(inc.startedAt).time} KST 시작 · 진행 중`;
-      const updates = (inc.updates || []).map((u) => `<li>
-          <b>${esc(INC_STAGE[u.status] || u.status || '')}</b>${esc(u.body || '')}
+      /* 시간 역순. 입력 순서를 믿지 않고 at 으로 정렬한다. */
+      const updates = [...(inc.updates || [])]
+        .sort((a, b) => String(b.at).localeCompare(String(a.at)))
+        .map((u) => `<li>
+          <b>${esc(INC_STAGE[u.status] || u.status || '')}</b>· ${esc(u.body || '')}
           <time>${esc(fmtKst(u.at))}</time></li>`).join('');
       return `<div class="inc">
-        <div class="inc-head">
-          <span class="inc-title">${esc(inc.title)}</span>
-          <span class="inc-badge ${esc(inc.impact || '')}">${esc(impact)}</span>
-        </div>
-        <div class="inc-scope">${esc(period)}</div>
+        <div class="inc-title">${esc(inc.title)}</div>
         <ul class="inc-updates">${updates}</ul>
       </div>`;
     }).join('');
-    return `<div class="day"><div class="day-date">${esc(longDate(key))}${key === today ? ' (오늘)' : ''}</div>${items}</div>`;
+    return `<div class="day"><div class="day-date">${esc(longDate(key))}</div>${items}</div>`;
   }).join('');
 
   document.getElementById('incidents').innerHTML = html;
@@ -472,7 +462,7 @@ function load() {
     INC_INDEX = buildIncidentIndex(INCIDENTS, (state.components || []).map((c) => c.id));
     renderBanner(state);
     renderComponents(state);
-    renderIncidents(state);
+    renderIncidents();
     renderFooter(state);
   }).catch(() => {
     const b = document.getElementById('banner');
