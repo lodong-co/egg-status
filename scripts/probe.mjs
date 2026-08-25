@@ -15,6 +15,17 @@ const STATE_PATH = new URL('../docs/state.json', import.meta.url);
 const RETAIN_DAYS = 90;
 const TIMEOUT_MS = 10_000;
 
+/**
+ * 이 시간을 넘겨 200 이 오면 "느림" 으로 센다.
+ *
+ * <p>200 이라고 다 정상은 아니다. 트래픽이 몰려 8초씩 걸리는 날도 응답은 200 이라,
+ * 성공/실패만 세면 그런 날이 초록으로 보인다. 실제로 느려진 날을 놓치는 셈이다.
+ *
+ * <p>GitHub 러너에서 한국까지 왕복이라 평소가 0.7~1.4초다. 여기에 여유를 두고 4초로 잡았다.
+ * 사람이 "느리다" 고 느끼기 시작하는 선이기도 하다. 10초를 넘으면 그건 실패로 접힌다.
+ */
+const SLOW_MS = 4_000;
+
 /** 공개 컴포넌트 5줄. 배열 순서 = 페이지 표시 순서. */
 export const TARGETS = [
   {
@@ -47,30 +58,66 @@ export const TARGETS = [
   { id: 'login',  name: '로그인', desc: 'LD PASS 통합 로그인', url: 'https://ldpass.com/' },
 ];
 
-async function probe(target) {
+/**
+ * 실패를 한 단어로 접는다. 이 값이 그대로 하루치에 쌓여서 나중에 원인이 된다.
+ *
+ * <p>예전에는 실패를 세기만 하고 왜 실패했는지는 어디에도 안 남겼다.
+ * 그래서 지난 장애의 원인을 물으면 답할 데이터가 없었다.
+ */
+function reasonOf(res, err) {
+  if (err) {
+    if (err.name === 'TimeoutError') return 'timeout';
+    const m = String(err.message || err);
+    if (/ENOTFOUND|EAI_AGAIN|getaddrinfo/i.test(m)) return 'dns';
+    if (/ECONNREFUSED/i.test(m)) return 'refused';
+    if (/ECONNRESET|EPIPE/i.test(m)) return 'reset';
+    if (/certificate|TLS|SSL|altname/i.test(m)) return 'tls';
+    return 'network';
+  }
+  return 'http-' + res.status;
+}
+
+async function probe(target, firstOkAt) {
   const started = Date.now();
+  let res = null;
+  let err = null;
   try {
-    const res = await fetch(target.url, {
+    res = await fetch(target.url, {
       redirect: 'follow',
       signal: AbortSignal.timeout(TIMEOUT_MS),
       headers: { 'user-agent': 'egg-status-probe/1.0 (+https://egghosting.com)' },
     });
-    return {
-      id: target.id, name: target.name, desc: target.desc,
-      up: res.status >= 200 && res.status < 300,
-      statusCode: res.status,
-      latencyMs: Date.now() - started,
-      error: null,
-    };
   } catch (e) {
-    // 타임아웃·DNS 실패·TCP 거부를 구분하지 않고 전부 DOWN 으로 접는다.
-    return {
-      id: target.id, name: target.name, desc: target.desc,
-      up: false, statusCode: null,
-      latencyMs: Date.now() - started,
-      error: e?.name === 'TimeoutError' ? 'timeout' : String(e?.message || e),
-    };
+    err = e;
   }
+
+  const latencyMs = Date.now() - started;
+  const up = Boolean(res) && res.status >= 200 && res.status < 300;
+
+  /*
+    아직 한 번도 200 을 받은 적 없는데 404/405 가 오면, 그건 장애가 아니라
+    우리가 점검 주소를 잘못 겨눈 것이다. 실제로 2026-08-19~20 에 관리 콘솔이
+    그랬다. 헬스 엔드포인트가 배포되기 전이라 프로브가 404 를 받았고,
+    멀쩡한 이틀이 「전체 장애」 로 칠해졌다.
+
+    그래서 이 경우만 측정에서 뺀다(측정 없음, 회색). 초록으로 칠하지 않는다 —
+    우리는 그 시간에 상태를 모른다.
+
+    한 번이라도 200 을 받은 뒤의 404 는 그대로 장애로 센다. 그건 라우팅이
+    깨진 것일 수 있고, 그런 진짜 장애를 이 규칙이 가려서는 안 된다.
+  */
+  const unmeasured = !up && !firstOkAt && res !== null && (res.status === 404 || res.status === 405);
+
+  return {
+    id: target.id, name: target.name, desc: target.desc,
+    up,
+    statusCode: res ? res.status : null,
+    latencyMs,
+    slow: up && latencyMs > SLOW_MS,
+    unmeasured,
+    reason: up ? null : reasonOf(res, err),
+    error: up ? null : (err ? (err.name === 'TimeoutError' ? 'timeout' : String(err.message || err)) : 'http ' + res.status),
+  };
 }
 
 /** 일자 경계는 KST 기준(장애 날짜가 한국 날짜와 맞아야 한다). */
@@ -97,7 +144,9 @@ async function loadState() {
 const prev = await loadState();
 const now = new Date();
 const today = dayKey(now);
-const results = await Promise.all(TARGETS.map(probe));
+const results = await Promise.all(
+  TARGETS.map((t) => probe(t, (prev.components || []).find((c) => c.id === t.id)?.firstOkAt || null)),
+);
 
 const daily = prev.daily || {};
 const components = results.map((r) => {
@@ -106,13 +155,30 @@ const components = results.map((r) => {
   // 가동률(%) 공개는 데이터가 쌓인 뒤 따로 판단하기로 했다. 표시와 무관하게 수집은 계속한다.
   const perDay = daily[r.id] || {};
   const cell = perDay[today] || { ok: 0, total: 0 };
-  cell.total += 1;
-  if (r.up) cell.ok += 1;
+  if (cell.slow === undefined) cell.slow = 0;
+  if (!cell.fails) cell.fails = {};
+
+  if (r.unmeasured) {
+    // 셈에 넣지 않는다. 다만 몇 번이었는지는 남겨서 눈에 띄게 한다.
+    cell.fails['probe-404'] = (cell.fails['probe-404'] || 0) + 1;
+  } else {
+    cell.total += 1;
+    if (r.up) {
+      cell.ok += 1;
+      if (r.slow) cell.slow += 1;
+    } else {
+      cell.fails[r.reason] = (cell.fails[r.reason] || 0) + 1;
+    }
+  }
   perDay[today] = cell;
   daily[r.id] = prune(perDay);
 
   return {
     ...r,
+    // 처음으로 200 을 받은 시점. 점검 주소가 제대로 걸렸는지의 기준이 된다.
+    firstOkAt: r.up ? (before?.firstOkAt || now.toISOString()) : (before?.firstOkAt || null),
+    // 화면이 "느림" 을 라벨로 쓰려면 기준을 알아야 한다.
+    slowMs: SLOW_MS,
     // 상태가 뒤집힌 시점. 그대로면 이전 값을 이어받는다.
     changedAt: before && before.up === r.up && before.changedAt ? before.changedAt : now.toISOString(),
   };
@@ -124,12 +190,22 @@ const state = {
   updatedAt: now.toISOString(),
   components,
   daily,
+  /*
+    손으로 바로잡은 기록. 프로브가 만들지 않고, 지우지도 않는다.
+    측정이 틀렸다고 조용히 고치면 그 상태판은 못 믿는다. 고쳤으면 고쳤다고 남긴다.
+  */
+  corrections: prev.corrections || [],
 };
 
 await writeFile(STATE_PATH, JSON.stringify(state, null, 2) + '\n', 'utf8');
 
 for (const c of components) {
-  console.log(`${c.up ? 'UP  ' : 'DOWN'} ${c.id.padEnd(8)} ${String(c.statusCode ?? '-').padEnd(4)} ${c.latencyMs}ms ${c.error || ''}`);
+  const tag = c.unmeasured ? '측정불가' : c.up ? (c.slow ? 'SLOW' : 'UP  ') : 'DOWN';
+  console.log(`${tag} ${c.id.padEnd(8)} ${String(c.statusCode ?? '-').padEnd(4)} ${c.latencyMs}ms ${c.error || ''}`);
+  if (c.unmeasured) {
+    console.log(`     ⚠ ${c.id}: 점검 주소가 ${c.statusCode} 를 낸다. 아직 한 번도 200 을 못 받았다.`);
+    console.log('       TARGETS 의 url 을 확인할 것. 장애로 세지 않고 측정에서 뺐다.');
+  }
 }
 
 /* ────────────────────────────────────────────────────────────────

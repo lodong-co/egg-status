@@ -121,6 +121,7 @@
   #tip .t-state i{width:8px;height:8px;border-radius:2px;display:inline-block;background:var(--nodata)}
   #tip .t-state i.ok{background:var(--ok)} #tip .t-state i.degraded{background:var(--degraded)}
   #tip .t-state i.partial{background:var(--partial)} #tip .t-state i.major{background:var(--major)}
+  #tip .t-fix{margin-top:5px;padding-top:5px;border-top:1px solid var(--tip-line);color:var(--tip-muted);font-size:11px}
   #tip .t-sub{color:var(--tip-muted);font-size:12px;margin-top:2px}
   #tip .t-inc{margin-top:8px;padding-top:8px;border-top:1px solid var(--tip-line);font-size:12px}
   #tip .t-inc .t-inc-h{display:block;color:var(--tip-muted);margin-bottom:3px}
@@ -272,10 +273,40 @@ function dayKeys(n) {
 function grade(cell) {
   if (!cell || !cell.total) return { cls: 'nodata', label: '측정 없음' };
   const r = cell.ok / cell.total;
-  if (r >= 1) return { cls: 'ok', label: '정상' };
-  if (r >= 0.95) return { cls: 'degraded', label: '성능 저하' };
-  if (r >= 0.5) return { cls: 'partial', label: '부분 장애' };
-  return { cls: 'major', label: '전체 장애' };
+  if (r < 0.5) return { cls: 'major', label: '전체 장애' };
+  if (r < 0.95) return { cls: 'partial', label: '부분 장애' };
+  if (r < 1) return { cls: 'degraded', label: '성능 저하' };
+  /* 다 떴지만 느렸던 날. 200 이라고 다 정상은 아니다 —
+     트래픽이 몰려 응답이 늘어진 날을 초록으로 칠하면 그 날을 통째로 놓친다. */
+  if ((cell.slow || 0) / cell.total >= 0.1) return { cls: 'degraded', label: '응답 지연' };
+  return { cls: 'ok', label: '정상' };
+}
+
+/* 실패 원인. 프로브가 남긴 한 단어를 사람 말로 편다. */
+const REASON = {
+  timeout: '응답 없음(시간 초과)',
+  dns: 'DNS 조회 실패',
+  refused: '연결 거부',
+  reset: '연결 끊김',
+  tls: '인증서 오류',
+  network: '네트워크 오류',
+  'probe-404': '점검 주소 없음(측정 불가)',
+};
+
+function reasonLabel(key) {
+  if (REASON[key]) return REASON[key];
+  const m = /^http-(\d+)$/.exec(key);
+  return m ? 'HTTP ' + m[1] : key;
+}
+
+/* 그날 왜 실패했는지. 많은 것부터. 없으면 빈 문자열. */
+function causeText(cell) {
+  const fails = cell && cell.fails;
+  if (!fails) return '';
+  const parts = Object.entries(fails)
+    .sort((a, b) => b[1] - a[1])
+    .map(([k, v]) => reasonLabel(k) + ' ' + v + '회');
+  return parts.join(' · ');
 }
 
 /* 실패한 점검 비율을 하루(24h)에 대입한 근사치. 점검 간격이 일정하지 않아
@@ -303,6 +334,8 @@ function uptimeText(perDay) {
 }
 
 /* ── 인시던트를 (컴포넌트, 날짜) 로 색인해 툴팁에서 바로 찾도록 한다. ── */
+let CORRECTIONS = [];   // 손으로 바로잡은 날 (state.json)
+let SLOW_SEC = 0;       // 느림 기준(초). 컴포넌트가 알려준다.
 let INCIDENTS = [];
 let INC_INDEX = {};   // compId -> dayKey -> [{title, impact}]
 
@@ -333,6 +366,19 @@ function tipHtml(compId, key, cell, startedAt) {
   const sub = measured && SHOW_UPTIME ? downtimeText(cell)
     : measured ? '' : '이 날짜는 아직 측정하지 않았습니다.';
 
+  /* 왜 그랬는지. 등급만 보여주면 "그래서 뭐가 문제였는데" 에 답할 수 없다. */
+  const cause = causeText(cell);
+  const causeHtml = cause ? `<div class="t-sub">${esc(cause)}</div>` : '';
+
+  const slow = cell && cell.slow ? cell.slow : 0;
+  const slowHtml = slow
+    ? `<div class="t-sub">느린 응답 ${slow}회${SLOW_SEC ? ` (${SLOW_SEC}초 초과)` : ''}</div>`
+    : '';
+
+  /* 손으로 바로잡은 날은 그렇다고 밝힌다. 조용히 고치면 이 상태판을 못 믿는다. */
+  const fix = (CORRECTIONS || []).find((c) => c.component === compId && c.day === key);
+  const fixHtml = fix ? `<div class="t-fix">보정됨 · ${esc(fix.reason)}</div>` : '';
+
   /* status.claude.com 은 "Related" 아래에 그날 걸린 인시던트 제목을 나열한다. */
   const incs = (INC_INDEX[compId] || {})[key] || [];
   const incHtml = incs.length
@@ -343,7 +389,7 @@ function tipHtml(compId, key, cell, startedAt) {
   return `<div class="t-date">${esc(longDate(key))}</div>
     <div class="t-state"><i class="${measured ? g.cls : ''}"></i>${esc(state)}</div>
     ${sub ? `<div class="t-sub">${esc(sub)}</div>` : ''}
-    ${incHtml}`;
+    ${causeHtml}${slowHtml}${fixHtml}${incHtml}`;
 }
 
 function showTip(target, html) {
@@ -368,7 +414,11 @@ function renderComponents(state) {
 
   document.getElementById('panel').innerHTML = comps.map((c) => {
     const perDay = daily[c.id] || {};
-    const cls = c.up ? 'ok' : 'major';
+    /* 떠 있어도 늘어지면 「정상」 이 아니다. 지금 느린 걸 초록으로 두면
+       사람들이 "되는데 왜 이렇게 느리냐" 고 물을 때 이 페이지가 아니라고 답한다. */
+    const slowNow = c.up && c.slowMs && c.latencyMs > c.slowMs;
+    const cls = !c.up ? 'major' : slowNow ? 'degraded' : 'ok';
+    const stateLabel = !c.up ? '장애' : slowNow ? '느림' : '정상';
     const segs = keys.map((key) => {
       const cell = perDay[key];
       const g = grade(cell);
@@ -378,7 +428,7 @@ function renderComponents(state) {
     return `<div class="comp">
       <div class="comp-head">
         <span class="comp-name">${esc(c.name)}<span class="comp-desc">${esc(c.desc)}</span></span>
-        <span class="comp-state ${cls}">${c.up ? '정상' : '장애'}</span>
+        <span class="comp-state ${cls}">${esc(stateLabel)}</span>
       </div>
       <div class="bars">${segs}</div>
       <div class="axis">
@@ -406,10 +456,12 @@ function renderComponents(state) {
 function renderBanner(state) {
   const comps = state.components || [];
   const down = comps.filter((c) => !c.up);
+  const slow = comps.filter((c) => c.up && c.slowMs && c.latencyMs > c.slowMs);
   const o = comps.length === 0 ? { cls: 'unknown', text: '측정 준비 중' }
-    : down.length === 0 ? { cls: 'ok', text: '모든 시스템 정상' }
-    : down.length === comps.length ? { cls: 'major', text: '전체 시스템 장애' }
-    : { cls: 'partial', text: `일부 시스템 장애 · ${down.length}건` };
+    : down.length === comps.length && down.length > 0 ? { cls: 'major', text: '전체 시스템 장애' }
+    : down.length > 0 ? { cls: 'partial', text: `일부 시스템 장애 · ${down.length}건` }
+    : slow.length > 0 ? { cls: 'degraded', text: `응답 지연 · ${slow.length}건` }
+    : { cls: 'ok', text: '모든 시스템 정상' };
   const b = document.getElementById('banner');
   b.className = 'banner ' + o.cls;
   b.querySelector('.txt').textContent = o.text;
@@ -484,6 +536,8 @@ function load() {
     fetch('./incidents.json', noStore).then((r) => (r.ok ? r.json() : [])).catch(() => []),
   ]).then(([state, incidents]) => {
     INCIDENTS = Array.isArray(incidents) ? incidents : [];
+    CORRECTIONS = Array.isArray(state.corrections) ? state.corrections : [];
+    SLOW_SEC = Math.round(((state.components || [])[0]?.slowMs || 0) / 1000);
     INC_INDEX = buildIncidentIndex(INCIDENTS, (state.components || []).map((c) => c.id));
     renderBanner(state);
     renderComponents(state);
