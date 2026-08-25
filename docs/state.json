@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "startedAt": "2026-08-19",
-  "updatedAt": "2026-08-25T23:12:48.256Z",
+  "updatedAt": "2026-08-25T23:25:28.831Z",
   "components": [
     {
       "id": "console",
@@ -9,8 +9,13 @@
       "desc": "대시보드 · API",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 724,
+      "latencyMs": 634,
+      "slow": false,
+      "unmeasured": false,
+      "reason": null,
       "error": null,
+      "firstOkAt": "2026-08-25T23:25:28.831Z",
+      "slowMs": 4000,
       "changedAt": "2026-08-20T08:49:17.783Z"
     },
     {
@@ -19,8 +24,13 @@
       "desc": "웹호스팅 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 1313,
+      "latencyMs": 673,
+      "slow": false,
+      "unmeasured": false,
+      "reason": null,
       "error": null,
+      "firstOkAt": "2026-08-25T23:25:28.831Z",
+      "slowMs": 4000,
       "changedAt": "2026-08-19T13:22:34.828Z"
     },
     {
@@ -29,8 +39,13 @@
       "desc": "클라우드 VM 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 1102,
+      "latencyMs": 1572,
+      "slow": false,
+      "unmeasured": false,
+      "reason": null,
       "error": null,
+      "firstOkAt": "2026-08-25T23:25:28.831Z",
+      "slowMs": 4000,
       "changedAt": "2026-08-19T13:22:34.828Z"
     },
     {
@@ -39,8 +54,13 @@
       "desc": "도메인 등록 · DNS",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 1294,
+      "latencyMs": 878,
+      "slow": false,
+      "unmeasured": false,
+      "reason": null,
       "error": null,
+      "firstOkAt": "2026-08-25T23:25:28.831Z",
+      "slowMs": 4000,
       "changedAt": "2026-08-19T13:22:34.828Z"
     },
     {
@@ -49,8 +69,13 @@
       "desc": "LD PASS 통합 로그인",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 1361,
+      "latencyMs": 922,
+      "slow": false,
+      "unmeasured": false,
+      "reason": null,
       "error": null,
+      "firstOkAt": "2026-08-25T23:25:28.831Z",
+      "slowMs": 4000,
       "changedAt": "2026-08-19T13:22:34.828Z"
     }
   ],
@@ -93,8 +118,10 @@
         "total": 31
       },
       "2026-08-26": {
-        "ok": 14,
-        "total": 14
+        "ok": 15,
+        "total": 15,
+        "slow": 0,
+        "fails": {}
       }
     },
     "web": {
@@ -127,8 +154,10 @@
         "total": 31
       },
       "2026-08-26": {
-        "ok": 14,
-        "total": 14
+        "ok": 15,
+        "total": 15,
+        "slow": 0,
+        "fails": {}
       }
     },
     "cloud": {
@@ -161,8 +190,10 @@
         "total": 31
       },
       "2026-08-26": {
-        "ok": 14,
-        "total": 14
+        "ok": 15,
+        "total": 15,
+        "slow": 0,
+        "fails": {}
       }
     },
     "domain": {
@@ -195,8 +226,10 @@
         "total": 31
       },
       "2026-08-26": {
-        "ok": 14,
-        "total": 14
+        "ok": 15,
+        "total": 15,
+        "slow": 0,
+        "fails": {}
       }
     },
     "login": {
@@ -229,8 +262,10 @@
         "total": 31
       },
       "2026-08-26": {
-        "ok": 14,
-        "total": 14
+        "ok": 15,
+        "total": 15,
+        "slow": 0,
+        "fails": {}
       }
     }
   },
