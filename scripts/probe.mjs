@@ -173,8 +173,21 @@ const components = results.map((r) => {
   perDay[today] = cell;
   daily[r.id] = prune(perDay);
 
+  /*
+    연속 실패 횟수. 인시던트를 언제 열지의 기준이다.
+    측정 불가(unmeasured)는 올리지도 내리지도 않는다 — 상태를 모르는 것이지
+    괜찮아진 것도, 더 나빠진 것도 아니다.
+  */
+  const downStreak = r.unmeasured ? (before?.downStreak || 0)
+    : r.up ? 0 : (before?.downStreak || 0) + 1;
+  const downSince = downStreak === 0 ? null
+    : downStreak === 1 ? now.toISOString()
+    : (before?.downSince || now.toISOString());
+
   return {
     ...r,
+    downStreak,
+    downSince,
     // 처음으로 200 을 받은 시점. 점검 주소가 제대로 걸렸는지의 기준이 된다.
     firstOkAt: r.up ? (before?.firstOkAt || now.toISOString()) : (before?.firstOkAt || null),
     // 화면이 "느림" 을 라벨로 쓰려면 기준을 알아야 한다.
@@ -183,6 +196,117 @@ const components = results.map((r) => {
     changedAt: before && before.up === r.up && before.changedAt ? before.changedAt : now.toISOString(),
   };
 });
+
+/* ────────────────────────────────────────────────────────────────
+   인시던트 자동 기록
+
+   전에는 docs/incidents.json 을 읽기만 했다. 그래서 진짜 장애가 나도
+   막대만 빨개지고 아래 「지난 인시던트」 는 계속 비어 있었다.
+   더 나쁜 건 RSS 다 — 페이지의 「알림 받기」 가 이 파일로 피드를 만드는데,
+   파일이 비어 있으니 <b>장애가 나도 구독자에게 아무것도 안 갔다.</b>
+
+   그래서 프로브가 직접 연다. 사람이 쓴 글은 건드리지 않는다(auto 플래그로 가른다).
+   자동으로 쓸 수 있는 건 사실뿐이라 사연은 못 적는다. 나중에 사람이 덧붙이면 된다.
+
+   컴포넌트마다 따로 연다. 여러 개가 같이 죽으면 글도 여러 개가 되지만,
+   각자 회복하는 시점이 달라서 하나로 묶으면 언제 끝났는지가 뭉개진다.
+   ──────────────────────────────────────────────────────────────── */
+
+/**
+ * 받침에 맞는 조사를 고른다.
+ *
+ * <p>"관리 콘솔이" 와 "클라우드 서버가" 는 다르다. 「이(가)」 로 얼버무리면
+ * 고객에게 보이는 글이 기계가 쓴 티가 난다.
+ */
+function josa(word, withBatchim, without) {
+  const last = String(word).trim().slice(-1).charCodeAt(0);
+  const isHangul = last >= 0xac00 && last <= 0xd7a3;
+  if (!isHangul) return withBatchim;
+  return (last - 0xac00) % 28 !== 0 ? withBatchim : without;
+}
+
+/** 실패 사유를 사람 말로. 고객이 읽는 글이라 http-503 을 그대로 쓰지 않는다. */
+const REASON_KO = {
+  timeout: '응답 시간 초과',
+  dns: 'DNS 조회 실패',
+  refused: '연결 거부',
+  reset: '연결 끊김',
+  tls: '인증서 오류',
+  network: '네트워크 오류',
+};
+
+function reasonKo(key) {
+  if (REASON_KO[key]) return REASON_KO[key];
+  const m = /^http-(\d+)$/.exec(String(key));
+  return m ? 'HTTP ' + m[1] : null;
+}
+
+/** 연속 이만큼 실패해야 연다. 10분 간격이라 약 30분. 배포 중 한두 번 튀는 걸로 열지 않는다. */
+const OPEN_AFTER = 3;
+
+/** 끝난 자동 기록을 이만큼 지나면 지운다. 사람이 쓴 건 지우지 않는다. */
+const INCIDENT_KEEP_DAYS = 180;
+
+const INC_PATH = new URL('../docs/incidents.json', import.meta.url);
+
+async function loadIncidents() {
+  try {
+    const parsed = JSON.parse(await readFile(INC_PATH, 'utf8'));
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+const incidents = await loadIncidents();
+const before2 = JSON.stringify(incidents);
+const downCount = components.filter((c) => !c.up && !c.unmeasured).length;
+
+for (const c of components) {
+  const open = incidents.find(
+    (i) => i.auto && !i.resolvedAt && Array.isArray(i.components) && i.components.includes(c.id),
+  );
+
+  if (!open && c.downStreak >= OPEN_AFTER) {
+    incidents.push({
+      id: 'auto-' + c.id + '-' + c.downSince,
+      auto: true,
+      title: c.name + ' 응답 없음',
+      impact: downCount === components.length ? 'major' : 'partial',
+      components: [c.id],
+      startedAt: c.downSince,
+      updates: [{
+        at: now.toISOString(),
+        status: 'investigating',
+        // 사실만 적는다. 아직 아무도 안 봤을 수 있는데 "조치 중" 이라고 쓰면 그건 거짓말이다.
+        body: c.name + josa(c.name, '이', '가') + ' ' + c.downStreak + '회 연속 응답하지 않았습니다.'
+          + (reasonKo(c.reason) ? ' 확인된 증상은 ' + reasonKo(c.reason) + '입니다.' : '')
+          + ' 에그호스팅 밖에서 하는 자동 점검에서 감지했습니다.',
+      }],
+    });
+    console.log('     ▶ 인시던트 열림: ' + c.name + ' (' + c.downSince + ' 부터)');
+  } else if (open && c.up) {
+    const mins = Math.max(1, Math.round((now - new Date(open.startedAt)) / 60000));
+    open.resolvedAt = now.toISOString();
+    open.updates.push({
+      at: now.toISOString(),
+      status: 'resolved',
+      body: c.name + josa(c.name, '이', '가') + ' 정상 응답을 재개했습니다.'
+        + ' 약 ' + mins + '분 동안 응답하지 않았습니다.',
+    });
+    console.log('     ◀ 인시던트 닫힘: ' + c.name + ' (약 ' + mins + '분)');
+  }
+}
+
+// 오래된 자동 기록만 걷어낸다. 사람이 쓴 건 그대로 둔다.
+const cutoff = now.getTime() - INCIDENT_KEEP_DAYS * 86400000;
+const kept = incidents.filter(
+  (i) => !(i.auto && i.resolvedAt && Date.parse(i.resolvedAt) < cutoff),
+);
+
+if (JSON.stringify(kept) !== before2) {
+  await writeFile(INC_PATH, JSON.stringify(kept, null, 2) + '\n', 'utf8');
+}
 
 const state = {
   schema: 1,
