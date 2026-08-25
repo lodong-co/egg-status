@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "startedAt": "2026-08-19",
-  "updatedAt": "2026-08-25T10:16:35.759Z",
+  "updatedAt": "2026-08-25T10:55:16.251Z",
   "components": [
     {
       "id": "console",
@@ -9,7 +9,7 @@
       "desc": "대시보드 · API",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 851,
+      "latencyMs": 979,
       "error": null,
       "changedAt": "2026-08-20T08:49:17.783Z"
     },
@@ -19,7 +19,7 @@
       "desc": "웹호스팅 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 956,
+      "latencyMs": 994,
       "error": null,
       "changedAt": "2026-08-19T13:22:34.828Z"
     },
@@ -39,7 +39,7 @@
       "desc": "도메인 등록 · DNS",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 1217,
+      "latencyMs": 1345,
       "error": null,
       "changedAt": "2026-08-19T13:22:34.828Z"
     },
@@ -49,7 +49,7 @@
       "desc": "LD PASS 통합 로그인",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 1265,
+      "latencyMs": 1429,
       "error": null,
       "changedAt": "2026-08-19T13:22:34.828Z"
     }
@@ -81,8 +81,8 @@
         "total": 35
       },
       "2026-08-25": {
-        "ok": 26,
-        "total": 26
+        "ok": 27,
+        "total": 27
       }
     },
     "web": {
@@ -111,8 +111,8 @@
         "total": 35
       },
       "2026-08-25": {
-        "ok": 26,
-        "total": 26
+        "ok": 27,
+        "total": 27
       }
     },
     "cloud": {
@@ -141,8 +141,8 @@
         "total": 35
       },
       "2026-08-25": {
-        "ok": 26,
-        "total": 26
+        "ok": 27,
+        "total": 27
       }
     },
     "domain": {
@@ -171,8 +171,8 @@
         "total": 35
       },
       "2026-08-25": {
-        "ok": 26,
-        "total": 26
+        "ok": 27,
+        "total": 27
       }
     },
     "login": {
@@ -201,8 +201,8 @@
         "total": 35
       },
       "2026-08-25": {
-        "ok": 26,
-        "total": 26
+        "ok": 27,
+        "total": 27
       }
     }
   }
