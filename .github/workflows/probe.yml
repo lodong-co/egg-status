@@ -1,20 +1,29 @@
 name: probe
 
-# 10분 간격. GitHub Pages 의 빌드 한도(시간당 약 10회)를 넘지 않도록 잡은 값이다.
-# 5분으로 당기면 시간당 12회가 되어 빌드가 밀리기 시작한다.
+# schedule 의 역할이 바뀌었다.
 #
-# ⚠ GitHub 의 schedule 은 러너가 붐비면 늦거나 건너뛸 수 있다. 그래서 이 값은
-#   "최소 10분"이 아니라 "대체로 10분"이다. 정밀 측정이 필요해지면 외부 프로버로 옮길 것
-#   (cloudflare/worker.js 에 대안 구현이 들어 있다).
+# 전에는 이 cron 이 곧 측정 주기였다. 그런데 10분으로 걸어 놔도 실제 간격은
+# 중앙값 38분, 최대 108분이었다(실측 78회). 10분 안팎으로 돈 적은 한 번도 없다.
+# GitHub 의 schedule 은 러너가 붐비면 늦추거나 건너뛴다.
+#
+# 그 간격이면 20~30분짜리 장애가 통째로 안 잡힌다. 그래서 측정은 러너 안의
+# 루프(scripts/watch.mjs)가 1분마다 하고, 이 cron 은 그 루프가 끊겼을 때
+# 다시 살리는 역할만 한다. 자주 걸어 둘수록 빈 시간이 짧아진다.
 on:
   schedule:
     - cron: '*/10 * * * *'
-  workflow_dispatch:        # 수동 실행 (Actions 탭 → Run workflow)
+  workflow_dispatch:
+    inputs:
+      minutes:
+        description: '루프를 돌 시간(분). 0 이면 한 번만 재고 끝낸다.'
+        required: false
+        default: '50'
 
 permissions:
-  contents: write           # state.json 커밋
+  contents: write           # state.json · incidents.json 커밋
 
-# 앞 실행이 아직 안 끝났으면 겹치지 않게. 취소하지는 않는다(측정 한 번을 버리지 않기 위해).
+# 루프가 도는 동안 새로 걸린 예약 실행은 대기시킨다. 취소하지는 않는다 —
+# 지금 도는 루프가 끝나는 순간 대기하던 것이 바로 이어받아서 빈 시간이 안 생긴다.
 concurrency:
   group: probe
   cancel-in-progress: false
@@ -22,6 +31,8 @@ concurrency:
 jobs:
   probe:
     runs-on: ubuntu-latest
+    # 루프가 50분이라 여유를 조금 둔다. GitHub 의 작업 하나는 최대 6시간이다.
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
 
@@ -29,20 +40,13 @@ jobs:
         with:
           node-version: '20'
 
-      - name: 프로브 실행
-        run: node scripts/probe.mjs
-
-      - name: 결과 커밋
+      - name: 커밋 신원
         run: |
           git config user.name  "egg-status bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/state.json docs/feed.xml docs/incidents.json
-          # 변한 게 없으면 커밋하지 않는다(빈 커밋으로 Pages 빌드를 낭비하지 않도록).
-          if git diff --staged --quiet; then
-            echo "변경 없음 — 커밋 생략"
-            exit 0
-          fi
-          git commit -m "status: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          # 동시 실행이 겹쳤을 때를 대비해 rebase 후 push.
-          git pull --rebase --autostash origin "${GITHUB_REF_NAME}"
-          git push
+
+      - name: 측정 루프
+        env:
+          # 예약 실행일 때는 inputs 가 비어 있어 기본값이 쓰인다.
+          RUN_MINUTES: ${{ github.event.inputs.minutes || '50' }}
+        run: node scripts/watch.mjs

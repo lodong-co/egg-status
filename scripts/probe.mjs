@@ -241,8 +241,18 @@ function reasonKo(key) {
   return m ? 'HTTP ' + m[1] : null;
 }
 
-/** 연속 이만큼 실패해야 연다. 10분 간격이라 약 30분. 배포 중 한두 번 튀는 걸로 열지 않는다. */
-const OPEN_AFTER = 3;
+/**
+ * 이만큼 계속 실패해야 연다.
+ *
+ * <p><b>횟수가 아니라 시간이다.</b> 전에는 "연속 3회" 였는데, 그건 점검 간격이 일정할 때만
+ * 뜻이 통한다. 실제로는 안 그랬다 — GitHub 예약 실행을 10분으로 걸어 뒀지만
+ * 실측 간격은 중앙값 38분, 최대 108분이었다. "연속 3회" 가 30분이 아니라 2시간이었던 셈이다.
+ * 반대로 1분마다 재면 3분이 되어 배포 중 잠깐 튄 것에도 장애 공지가 나간다.
+ *
+ * <p>시간으로 재면 점검 간격이 바뀌어도 뜻이 그대로다. 30분은 "배포하다 잠깐 튄 것" 과
+ * "고객이 이미 겪고 있는 일" 을 가르는 선이다.
+ */
+const OPEN_AFTER_MS = 30 * 60 * 1000;
 
 /** 끝난 자동 기록을 이만큼 지나면 지운다. 사람이 쓴 건 지우지 않는다. */
 const INCIDENT_KEEP_DAYS = 180;
@@ -267,7 +277,10 @@ for (const c of components) {
     (i) => i.auto && !i.resolvedAt && Array.isArray(i.components) && i.components.includes(c.id),
   );
 
-  if (!open && c.downStreak >= OPEN_AFTER) {
+  // 첫 실패 이후 계속 실패한 시간. 한 번 실패하고 만 경우는 downSince 가 지워져 0 이다.
+  const downFor = c.downSince ? now.getTime() - Date.parse(c.downSince) : 0;
+
+  if (!open && downFor >= OPEN_AFTER_MS) {
     incidents.push({
       id: 'auto-' + c.id + '-' + c.downSince,
       auto: true,
@@ -279,12 +292,14 @@ for (const c of components) {
         at: now.toISOString(),
         status: 'investigating',
         // 사실만 적는다. 아직 아무도 안 봤을 수 있는데 "조치 중" 이라고 쓰면 그건 거짓말이다.
-        body: c.name + josa(c.name, '이', '가') + ' ' + c.downStreak + '회 연속 응답하지 않았습니다.'
+        body: c.name + josa(c.name, '이', '가') + ' ' + Math.round(downFor / 60000)
+          + '분째 응답하지 않고 있습니다.'
           + (reasonKo(c.reason) ? ' 확인된 증상은 ' + reasonKo(c.reason) + '입니다.' : '')
           + ' 에그호스팅 밖에서 하는 자동 점검에서 감지했습니다.',
       }],
     });
-    console.log('     ▶ 인시던트 열림: ' + c.name + ' (' + c.downSince + ' 부터)');
+    console.log('     ▶ 인시던트 열림: ' + c.name + ' (' + c.downSince + ' 부터 '
+      + Math.round(downFor / 60000) + '분째)');
   } else if (open && c.up) {
     const mins = Math.max(1, Math.round((now - new Date(open.startedAt)) / 60000));
     open.resolvedAt = now.toISOString();

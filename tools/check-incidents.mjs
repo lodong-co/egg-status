@@ -2,7 +2,11 @@
  * 인시던트 자동 기록을 실제로 돌려 본다.
  *
  * <p>진짜 서비스를 죽일 수는 없으니, 프로브 사본이 우리가 조종하는 서버를 보게 하고
- * 그 서버를 죽였다 살린다. 프로브를 여러 번 돌려서 언제 열리고 언제 닫히는지 본다.
+ * 그 서버를 죽였다 살린다.
+ *
+ * <p>기준이 <b>시간</b>(30분 계속 실패)이라 30분을 기다릴 수는 없다.
+ * 대신 state.json 의 downSince 를 과거로 되감아서 "이미 31분째" 인 상황을 만든다.
+ * 프로브 입장에서는 실제로 그만큼 지난 것과 구분되지 않는다.
  */
 import http from 'node:http';
 import fs from 'node:fs';
@@ -55,8 +59,11 @@ const HUMAN = {
   startedAt: '2026-08-01T15:00:00Z', resolvedAt: '2026-08-01T16:00:00Z',
   updates: [{ at: '2026-08-01T16:00:00Z', status: 'resolved', body: '건드리면 안 된다.' }],
 };
-fs.writeFileSync(INC, JSON.stringify([HUMAN], null, 2));
-fs.writeFileSync(ST, JSON.stringify({ schema: 1, startedAt: null, updatedAt: null, components: [], daily: {} }));
+const reset = () => {
+  fs.writeFileSync(INC, JSON.stringify([HUMAN], null, 2));
+  fs.writeFileSync(ST, JSON.stringify({ schema: 1, startedAt: null, updatedAt: null, components: [], daily: {} }));
+};
+reset();
 
 /* 반드시 비동기로. execFileSync 는 부모 이벤트 루프를 막아서
    이 파일의 테스트 서버가 요청에 답을 못 하고, 전부 timeout 이 된다. */
@@ -64,29 +71,37 @@ const run = async () => (await run1('node', [path.join(ROOT, 'scripts', 'probe.m
 const incs = () => JSON.parse(fs.readFileSync(INC, 'utf8'));
 const autoFor = (id) => incs().find((x) => x.auto && (x.components || []).includes(id));
 
+/** 「이미 N분째 죽어 있었다」로 만든다. 30분을 실제로 기다릴 수는 없다. */
+const rewind = (id, minutes) => {
+  const st = JSON.parse(fs.readFileSync(ST, 'utf8'));
+  const c = st.components.find((x) => x.id === id);
+  c.downSince = new Date(Date.now() - minutes * 60000).toISOString();
+  fs.writeFileSync(ST, JSON.stringify(st));
+};
+
 try {
   // ── 1. 다 정상일 때는 아무것도 안 생긴다
   await run(); await run();
   check('정상일 땐 인시던트 안 생김', incs().length === 1, incs().length + '건 (사람이 쓴 1건만)');
 
-  // ── 2. 관리 콘솔을 죽인다. 2회까지는 안 연다.
+  // ── 2. 30분 안에는 몇 번을 실패해도 안 연다
   mode.console = 503;
   await run();
-  check('1회 실패로는 안 연다', !autoFor('console'), '');
-  await run();
-  check('2회 실패로도 안 연다 (배포 중 튐 방지)', !autoFor('console'), '');
+  check('한 번 실패로는 안 연다', !autoFor('console'), '');
+  await run(); await run(); await run();
+  check('30분 안이면 여러 번 실패해도 안 연다', !autoFor('console'), '배포 중 튐 방지');
 
-  // ── 3. 3회째에 열린다
+  // ── 3. 30분을 넘겨 계속 실패하면 연다
+  rewind('console', 31);
   const log3 = await run();
   const opened = autoFor('console');
-  check('3회 연속이면 열린다', Boolean(opened), opened ? opened.title : '안 열림');
+  check('30분 넘게 계속 실패하면 연다', Boolean(opened), opened ? opened.title : '안 열림');
   check('로그에도 남는다', /인시던트 열림/.test(log3), (log3.match(/▶.*/) || [''])[0].trim());
-  check('시작 시각이 첫 실패 때', Boolean(opened && opened.startedAt), opened?.startedAt);
-  check('어느 컴포넌트인지 붙는다', opened?.components?.[0] === 'console', JSON.stringify(opened?.components));
-  check('사실만 적는다', /자동 점검/.test(opened?.updates?.[0]?.body || ''), opened?.updates?.[0]?.body);
+  check('본문에 몇 분째인지', /3\dㅂ?분째 응답하지 않고 있습니다/.test(opened?.updates?.[0]?.body || ''), opened?.updates?.[0]?.body);
   check('원인을 사람 말로', /HTTP 503/.test(opened?.updates?.[0]?.body || ''), '');
   check('조사가 맞다 (「이(가)」 아님)',
     /관리 콘솔이 /.test(opened?.updates?.[0]?.body || '') && !/\(가\)/.test(opened?.updates?.[0]?.body || ''), '');
+  check('어느 컴포넌트인지 붙는다', opened?.components?.[0] === 'console', JSON.stringify(opened?.components));
 
   // ── 4. 계속 죽어 있어도 하나만
   await run(); await run();
@@ -104,7 +119,7 @@ try {
 
   // ── 6. 다시 죽으면 새 글이 열린다
   mode.console = 503;
-  await run(); await run(); await run();
+  await run(); rewind('console', 31); await run();
   const again = incs().filter((x) => x.auto && (x.components || []).includes('console'));
   check('다시 죽으면 새 글', again.length === 2, again.length + '건');
   check('앞 글은 닫힌 채로', Boolean(again[0].resolvedAt) && !again[1].resolvedAt, '');
@@ -114,22 +129,30 @@ try {
   const human = incs().find((x) => !x.auto);
   check('사람이 쓴 글 안 건드림', JSON.stringify(human) === JSON.stringify(HUMAN), human?.title);
 
-  // ── 8. 점검 주소가 틀린 경우엔 열지 않는다 (측정 불가)
-  fs.writeFileSync(ST, JSON.stringify({ schema: 1, startedAt: null, updatedAt: null, components: [], daily: {} }));
-  fs.writeFileSync(INC, JSON.stringify([HUMAN], null, 2));
+  // ── 8. 잠깐 튀었다 돌아오면 아무 일 없다 (30분을 못 채운다)
+  reset();
+  await run();
+  mode.web = 503; await run(); await run();
+  mode.web = 200; await run(); await run();
+  check('잠깐 튀었다 돌아오면 글 없음', !autoFor('web'), '30분을 못 채웠다');
+
+  // ── 9. 점검 주소가 틀린 경우엔 열지 않는다 (측정 불가)
+  reset();
   mode.domain = 404;
-  await run(); await run(); await run(); await run();
-  check('한 번도 200 못 받은 404 는 인시던트 안 염', !autoFor('domain'), autoFor('domain') ? '열림 ❌' : '안 열림');
+  await run(); await run();
+  rewind('domain', 60);
+  await run();
+  check('한 번도 200 못 받은 404 는 안 연다', !autoFor('domain'), autoFor('domain') ? '열림 ❌' : '안 열림');
   const st = JSON.parse(fs.readFileSync(ST, 'utf8'));
   const today = Object.keys(st.daily.domain).sort().pop();
   check('그 실패는 측정에서 빠진다', st.daily.domain[today].total === 0, JSON.stringify(st.daily.domain[today]));
 
-  // ── 9. 한 번 200 을 받은 뒤의 404 는 진짜 장애로 센다
+  // ── 10. 한 번 200 을 받은 뒤의 404 는 진짜 장애로 센다
   mode.domain = 200; await run();
-  mode.domain = 404; await run(); await run(); await run();
+  mode.domain = 404; await run(); rewind('domain', 31); await run();
   check('200 받은 뒤의 404 는 장애로', Boolean(autoFor('domain')), autoFor('domain')?.title || '안 열림 ❌');
 
-  // ── 10. RSS 에 실린다
+  // ── 11. RSS 에 실린다
   const feed = fs.readFileSync(path.join(DOCS, 'feed.xml'), 'utf8');
   check('RSS 에 항목이 생긴다', (feed.match(/<item>/g) || []).length > 0, (feed.match(/<item>/g) || []).length + '건');
   check('RSS 제목에 컴포넌트 이름', /<title>도메인 응답 없음<\/title>/.test(feed), (feed.match(/<title>[^<]*응답 없음[^<]*<\/title>/) || [''])[0]);
