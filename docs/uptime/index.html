@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>가동률 — 에그호스팅 서비스 상태</title>
+<meta name="description" content="에그호스팅 서비스별 월간 가동률. 에그호스팅 인프라 외부에서 측정합니다.">
+<meta name="robots" content="noindex">
+<link rel="alternate" type="application/rss+xml" title="에그호스팅 서비스 상태" href="../feed.xml">
+<link rel="icon" type="image/png" href="../favicon.png">
+<link rel="stylesheet" href="../common.css">
+<style>
+  /* 컴포넌트 한 덩어리 */
+  .uc{border:1px solid var(--line);background:var(--surface);border-radius:10px;
+    padding:19px 20px 17px;margin-bottom:16px}
+  .uc-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;
+    flex-wrap:wrap;margin-bottom:16px}
+  .uc-name{font-size:14.5px;font-weight:600;letter-spacing:-.005em}
+  .uc-desc{display:block;font-size:12.5px;color:var(--muted);font-weight:400;margin-top:1px}
+  .uc-range{font-size:12.5px;color:var(--faint);white-space:nowrap;font-variant-numeric:tabular-nums}
+
+  /* 달력 석 달 */
+  .months{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .month-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:8px}
+  .month-name{font-size:12.5px;font-weight:600;margin:0}
+  .month-rate{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .month-rate.none{color:var(--faint)}
+
+  /* 요일 머리 + 날짜 칸. 한 줄 7칸으로 실제 달력처럼 놓는다. */
+  .dow{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:3px}
+  .dow span{font-size:9.5px;color:var(--faint);text-align:center;line-height:1.4}
+  .days{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+  .day{aspect-ratio:1;border-radius:2px;background:var(--nodata);cursor:default;
+    transition:opacity .1s}
+  .day.ok{background:var(--ok)} .day.degraded{background:var(--degraded)}
+  .day.partial{background:var(--partial)} .day.major{background:var(--major)}
+  .day.blank{background:transparent;cursor:default}
+  .day:not(.blank):hover{opacity:.6}
+
+  .cap{margin:18px 0 0;font-size:12.5px;color:var(--muted);line-height:1.7}
+
+  @media (max-width:640px){
+    .months{grid-template-columns:1fr;gap:20px}
+    .uc{padding:16px 14px 14px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <a href="https://egghosting.com" title="에그호스팅">
+        <img class="logo-light" src="../logo-light.png" alt="에그호스팅" width="320" height="81">
+        <img class="logo-dark" src="../logo-dark.png" alt="에그호스팅" width="320" height="81">
+      </a>
+      <h1>서비스 상태</h1>
+    </div>
+    <div class="subscribe">
+      <button class="sub-btn" id="subBtn" aria-expanded="false">알림 받기</button>
+      <div class="sub-panel" id="subPanel">
+        <p>RSS 리더에 아래 주소를 등록하면 인시던트가 올라올 때 알림을 받을 수 있습니다.</p>
+        <a href="../feed.xml" id="feedLink">RSS 피드 열기</a>
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <a href="../#incidents">지난 인시던트</a>
+    <a href="./" class="on" aria-current="page">가동률</a>
+  </nav>
+
+  <div id="panel"></div>
+
+  <div class="legend">
+    <span><i class="ok"></i>정상</span>
+    <span><i class="degraded"></i>성능 저하</span>
+    <span><i class="partial"></i>부분 장애</span>
+    <span><i class="major"></i>전체 장애</span>
+    <span><i></i>측정 없음</span>
+  </div>
+
+  <p class="cap" id="cap">하루를 한 칸으로 칠합니다. 칸에 마우스를 올리면 그날 무슨 일이 있었는지 나옵니다.</p>
+
+  <p class="back"><a href="../">← 현재 상태</a></p>
+
+  <footer>
+    <p id="checked">—</p>
+    <p id="meta">점검은 에그호스팅 인프라 외부에서 수행됩니다</p>
+    <p class="foot-links">
+      <a href="https://egghosting.com">에그호스팅</a>
+      <a href="https://egghosting.com/support">문의하기</a>
+      <a href="../feed.xml">RSS</a>
+    </p>
+  </footer>
+</div>
+
+<div id="tip" role="tooltip"></div>
+
+<script src="../common.js"></script>
+<script>
+/* 몇 달치를 보여줄지. status.claude.com 과 같이 석 달. */
+const MONTHS = 3;
+
+/* 보관 기간(probe.mjs 의 RETAIN_DAYS)보다 뒤로는 갈 수 없다. 데이터가 지워져 있다. */
+const RETAIN_DAYS = 90;
+
+const DOW = ['일', '월', '화', '수', '목', '금', '토'];
+
+let STATE = null;
+let CORRECTIONS = [];
+
+/** 오늘(KST)의 연·월. 달력의 기준점이다. */
+function thisMonth() {
+  const k = new Date(Date.now() + 9 * 3600 * 1000);
+  return { y: k.getUTCFullYear(), m: k.getUTCMonth() + 1 };
+}
+
+function shift({ y, m }, by) {
+  const t = (y * 12 + (m - 1)) + by;
+  return { y: Math.floor(t / 12), m: (t % 12) + 1 };
+}
+
+const pad = (n) => String(n).padStart(2, '0');
+const keyOf = (y, m, d) => `${y}-${pad(m)}-${pad(d)}`;
+
+/** 그 달의 날짜 키를 전부. 오늘 이후는 뺀다 — 아직 오지 않은 날을 회색으로 그리면 장애처럼 보인다. */
+function daysOf(y, m) {
+  const last = new Date(Date.UTC(y, m, 0)).getUTCDate();
+  const today = dayKeys(1)[0];
+  const out = [];
+  for (let d = 1; d <= last; d += 1) {
+    const key = keyOf(y, m, d);
+    out.push({ key, future: key > today });
+  }
+  return out;
+}
+
+/** 그 달 무슨 요일부터 시작하는지. 앞을 빈 칸으로 채워 달력 모양을 맞춘다. */
+const firstDow = (y, m) => new Date(Date.UTC(y, m - 1, 1)).getUTCDay();
+
+/**
+ * 한 달 가동률.
+ *
+ * <p>잰 날만 센다. 측정 시작 전이나 빠진 날을 100%로 치면 실제보다 좋아 보인다.
+ * 잰 날이 하나도 없으면 숫자를 만들지 않고 「측정 없음」이라고 쓴다.
+ */
+function monthRate(perDay, y, m) {
+  let ok = 0;
+  let total = 0;
+  let measured = 0;
+  for (const { key } of daysOf(y, m)) {
+    const c = perDay[key];
+    if (!c || !c.total) continue;
+    ok += c.ok;
+    total += c.total;
+    measured += 1;
+  }
+  if (!total) return { text: '측정 없음', none: true, measured: 0 };
+  const pct = (ok / total) * 100;
+  // 99.999% 를 100% 로 올려 적지 않는다. 한 번이라도 떨어졌으면 100 이 아니다.
+  const text = (ok === total ? '100' : Math.floor(pct * 100) / 100).toString() + '%';
+  return { text, none: false, measured };
+}
+
+function tipFor(compId, key, cell) {
+  const g = grade(cell);
+  const measured = Boolean(cell && cell.total);
+  const started = STATE && STATE.startedAt;
+  const state = measured ? g.label : (started && key < started ? '측정 시작 전' : '측정 없음');
+  const cause = causeText(cell);
+  const slow = cell && cell.slow ? cell.slow : 0;
+  const fix = CORRECTIONS.find((c) => c.component === compId && c.day === key);
+  return `<div class="t-date">${esc(longDate(key))}</div>
+    <div class="t-state"><i class="${measured ? g.cls : ''}"></i>${esc(state)}</div>
+    ${measured && SHOW_UPTIME ? `<div class="t-sub">${esc(downtimeText(cell))}</div>` : ''}
+    ${cause ? `<div class="t-sub">${esc(cause)}</div>` : ''}
+    ${slow ? `<div class="t-sub">느린 응답 ${slow}회</div>` : ''}
+    ${fix ? `<div class="t-fix">보정됨 · ${esc(fix.reason)}</div>` : ''}`;
+}
+
+function render() {
+  const comps = STATE.components || [];
+  const daily = STATE.daily || {};
+  const base = thisMonth();
+  const months = [];
+  for (let i = MONTHS - 1; i >= 0; i -= 1) months.push(shift(base, -i));
+
+  const rangeText = `${months[0].y}년 ${months[0].m}월 ~ ${months[months.length - 1].m}월`;
+
+  document.getElementById('panel').innerHTML = comps.map((c) => {
+    const perDay = daily[c.id] || {};
+    const cal = months.map(({ y, m }) => {
+      const rate = monthRate(perDay, y, m);
+      const blanks = Array.from({ length: firstDow(y, m) }, () => '<div class="day blank"></div>').join('');
+      const cells = daysOf(y, m).map(({ key, future }) => {
+        if (future) return '<div class="day blank"></div>';
+        const g = grade(perDay[key]);
+        return `<div class="day ${g.cls}" data-comp="${esc(c.id)}" data-key="${esc(key)}"></div>`;
+      }).join('');
+      return `<div class="month">
+        <div class="month-head">
+          <h3 class="month-name">${y === base.y ? '' : y + '년 '}${m}월</h3>
+          ${SHOW_UPTIME ? `<span class="month-rate${rate.none ? ' none' : ''}">${esc(rate.text)}</span>` : ''}
+        </div>
+        <div class="dow">${DOW.map((d) => `<span>${d}</span>`).join('')}</div>
+        <div class="days">${blanks}${cells}</div>
+      </div>`;
+    }).join('');
+
+    return `<section class="uc">
+      <div class="uc-head">
+        <span class="uc-name">${esc(c.name)}<span class="uc-desc">${esc(c.desc)}</span></span>
+        <span class="uc-range">${esc(rangeText)}</span>
+      </div>
+      <div class="months">${cal}</div>
+    </section>`;
+  }).join('');
+
+  /* 칸이 많아 개별 리스너 대신 위임으로 처리한다. */
+  const panel = document.getElementById('panel');
+  panel.onmouseover = (e) => {
+    const day = e.target.closest('.day');
+    if (!day || !day.dataset.key) return;
+    const cell = (daily[day.dataset.comp] || {})[day.dataset.key];
+    showTip(day, tipFor(day.dataset.comp, day.dataset.key, cell));
+  };
+  panel.onmouseout = (e) => { if (e.target.closest('.day')) hideTip(); };
+  panel.onmouseleave = hideTip;
+
+  document.getElementById('checked').textContent =
+    `마지막 점검 ${STATE.updatedAt ? fmtKst(STATE.updatedAt) : '—'}`;
+  document.getElementById('meta').textContent =
+    '점검은 에그호스팅 인프라 외부에서 수행됩니다'
+    + (STATE.startedAt ? ` · 측정 시작 ${STATE.startedAt}` : '');
+
+  if (STATE.startedAt) {
+    document.getElementById('cap').textContent =
+      `하루를 한 칸으로 칠합니다. 칸에 마우스를 올리면 그날 무슨 일이 있었는지 나옵니다.`
+      + ` 측정은 ${STATE.startedAt} 에 시작했고, 기록은 ${RETAIN_DAYS}일치를 보관합니다.`;
+  }
+}
+
+/* ── 구독 패널 (현재 상태 화면과 같은 동작) ── */
+const subBtn = document.getElementById('subBtn');
+const subPanel = document.getElementById('subPanel');
+subBtn.addEventListener('click', () => {
+  const open = subPanel.classList.toggle('open');
+  subBtn.setAttribute('aria-expanded', String(open));
+});
+document.addEventListener('click', (e) => {
+  if (subPanel.contains(e.target) || subBtn.contains(e.target)) return;
+  subPanel.classList.remove('open');
+  subBtn.setAttribute('aria-expanded', 'false');
+});
+document.getElementById('feedLink').href = new URL('../feed.xml', location.href).href;
+
+function load() {
+  fetch('../state.json', noStore)
+    .then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then((state) => {
+      STATE = state;
+      CORRECTIONS = Array.isArray(state.corrections) ? state.corrections : [];
+      render();
+    })
+    .catch(() => {
+      document.getElementById('panel').innerHTML =
+        '<p class="cap">가동률을 불러오지 못했습니다.</p>';
+    });
+}
+
+load();
+setInterval(load, 300000);
+window.addEventListener('scroll', hideTip, { passive: true });
+</script>
+</body>
+</html>

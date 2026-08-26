@@ -81,7 +81,7 @@ try {
   for (const c of slowState.components) c.slowMs = 4000;
   slowState.components[0].latencyMs = 7000;
   fs.mkdirSync(TMP, { recursive: true });
-  for (const f of ['index.html', 'incidents.json']) fs.copyFileSync(DOCS + '/' + f, TMP + '/' + f);
+  for (const f of ['index.html', 'incidents.json', 'common.css', 'common.js']) fs.copyFileSync(DOCS + '/' + f, TMP + '/' + f);
   fs.writeFileSync(TMP + '/state.json', JSON.stringify(slowState));
   serveFrom = TMP;
   await b.goto('http://127.0.0.1:' + PORT + '/');
