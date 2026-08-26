@@ -201,7 +201,14 @@ function render() {
   }
   if (months.length === 0) months.push(base);
 
-  const rangeText = `${months[0].y}년 ${months[0].m}월 ~ ${months[months.length - 1].m}월`;
+  /* 한 달뿐이면 「8월 ~ 8월」 이라고 쓰지 않는다. 해가 갈리면 뒤쪽 해도 적는다. */
+  const first = months[0];
+  const last = months[months.length - 1];
+  const rangeText = months.length === 1
+    ? `${first.y}년 ${first.m}월`
+    : first.y === last.y
+      ? `${first.y}년 ${first.m}월 ~ ${last.m}월`
+      : `${first.y}년 ${first.m}월 ~ ${last.y}년 ${last.m}월`;
 
   document.getElementById('panel').innerHTML = comps.map((c) => {
     const perDay = daily[c.id] || {};

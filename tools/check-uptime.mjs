@@ -79,6 +79,10 @@ try {
     + ".filter(function(d){return d.dataset.key.slice(0,7) < start}).length;})()",
   );
   check('측정 시작 전 달은 안 그린다', tooEarly === 0, tooEarly + '칸');
+  const range = String(await b.evaluate("document.querySelector('.uc-range').textContent"));
+  // 「8월 ~ 8월」 처럼 같은 달을 두 번 적지 않는다.
+  check('기간 문구가 자연스럽다', !/(\d+)월 ~ \1월/.test(range), range);
+
   check('요일 머리가 붙는다',
     (await b.evaluate("document.querySelector('.dow').textContent")) === '일월화수목금토',
     await b.evaluate("document.querySelector('.dow').textContent"));
