@@ -63,9 +63,22 @@ try {
 
   check('컴포넌트 5줄', await b.evaluate("document.querySelectorAll('.uc').length") === 5,
     await b.evaluate("document.querySelectorAll('.uc').length"));
-  check('컴포넌트마다 석 달',
-    await b.evaluate("[].slice.call(document.querySelectorAll('.uc')).every(function(u){return u.querySelectorAll('.month').length===3})"),
-    await b.evaluate("document.querySelectorAll('.month').length") + '개 달');
+  /* 측정 시작 전의 달은 안 그린다. 빈 회색 격자가 가로의 절반을 먹기 때문이다.
+     데이터가 쌓이면 저절로 석 달이 된다 — 그래서 1~3 사이면 맞다. */
+  const perComp = await b.evaluate(
+    "[].slice.call(document.querySelectorAll('.uc')).map(function(u){return u.querySelectorAll('.month').length})",
+  );
+  check('컴포넌트마다 달이 1~3개', Array.isArray(perComp) && perComp.length === 5
+    && perComp.every(function (n) { return n >= 1 && n <= 3; })
+    && new Set(perComp).size === 1, JSON.stringify(perComp));
+
+  /* 그린 달은 전부 측정 시작 이후여야 한다. */
+  const tooEarly = await b.evaluate(
+    "(function(){var start=STATE.startedAt.slice(0,7);"
+    + "return [].slice.call(document.querySelectorAll('.day[data-key]'))"
+    + ".filter(function(d){return d.dataset.key.slice(0,7) < start}).length;})()",
+  );
+  check('측정 시작 전 달은 안 그린다', tooEarly === 0, tooEarly + '칸');
   check('요일 머리가 붙는다',
     (await b.evaluate("document.querySelector('.dow').textContent")) === '일월화수목금토',
     await b.evaluate("document.querySelector('.dow').textContent"));
@@ -87,7 +100,7 @@ try {
     "[].slice.call(document.querySelectorAll('.uc')[0].querySelectorAll('.month-rate')).map(function(e){return e.textContent.trim()}).join(' | ')",
   );
   check('달마다 가동률이 나온다', /%/.test(String(rates)), rates);
-  check('데이터 없는 달은 「측정 없음」', /측정 없음/.test(String(rates)), rates);
+  check('빈 「측정 없음」 달이 남아 있지 않다', !/측정 없음/.test(String(rates)), rates);
 
   // ── 아직 오지 않은 날은 안 칠한다
   const future = await b.evaluate(`(function(){

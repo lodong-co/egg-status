@@ -21,6 +21,8 @@
 
   /* 달력 석 달 */
   .months{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  /* 달이 적을 때 한 칸이 화면 폭만큼 늘어나면 네모가 커져서 달력으로 안 보인다. */
+  .months.few{grid-template-columns:repeat(auto-fit,minmax(0,220px));justify-content:start}
   .month-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:8px}
   .month-name{font-size:12.5px;font-weight:600;margin:0}
   .month-rate{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
@@ -182,8 +184,22 @@ function render() {
   const comps = STATE.components || [];
   const daily = STATE.daily || {};
   const base = thisMonth();
+  /*
+    측정 시작 전의 달은 그리지 않는다.
+
+    석 달을 고정으로 그리면 시작 전 달이 빈 회색 격자로 남아 가로의 절반을 먹는다.
+    없는 걸 자리까지 잡아 보여줄 이유가 없다. 데이터가 쌓이면 저절로 석 달이 된다.
+  */
+  const started = STATE.startedAt ? { y: Number(STATE.startedAt.slice(0, 4)), m: Number(STATE.startedAt.slice(5, 7)) } : null;
   const months = [];
-  for (let i = MONTHS - 1; i >= 0; i -= 1) months.push(shift(base, -i));
+  for (let i = MONTHS - 1; i >= 0; i -= 1) {
+    const m = shift(base, -i);
+    if (started && (m.y * 12 + m.m) < (started.y * 12 + started.m)) {
+      continue;
+    }
+    months.push(m);
+  }
+  if (months.length === 0) months.push(base);
 
   const rangeText = `${months[0].y}년 ${months[0].m}월 ~ ${months[months.length - 1].m}월`;
 
@@ -212,7 +228,7 @@ function render() {
         <span class="uc-name">${esc(c.name)}<span class="uc-desc">${esc(c.desc)}</span></span>
         <span class="uc-range">${esc(rangeText)}</span>
       </div>
-      <div class="months">${cal}</div>
+      <div class="months${months.length < 3 ? ' few' : ''}">${cal}</div>
     </section>`;
   }).join('');
 
