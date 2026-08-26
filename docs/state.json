@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "startedAt": "2026-08-19",
-  "updatedAt": "2026-08-26T05:11:20.382Z",
+  "updatedAt": "2026-08-26T05:22:20.808Z",
   "components": [
     {
       "id": "console",
@@ -9,7 +9,7 @@
       "desc": "대시보드 · API",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 980,
+      "latencyMs": 831,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -26,7 +26,7 @@
       "desc": "웹호스팅 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 1026,
+      "latencyMs": 1029,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -43,7 +43,7 @@
       "desc": "클라우드 VM 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 1397,
+      "latencyMs": 1609,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -60,7 +60,7 @@
       "desc": "도메인 등록 · DNS",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 1286,
+      "latencyMs": 1285,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -77,7 +77,7 @@
       "desc": "LD PASS 통합 로그인",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 1388,
+      "latencyMs": 1374,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -128,8 +128,8 @@
         "total": 31
       },
       "2026-08-26": {
-        "ok": 185,
-        "total": 185,
+        "ok": 196,
+        "total": 196,
         "slow": 0,
         "fails": {}
       }
@@ -164,8 +164,8 @@
         "total": 31
       },
       "2026-08-26": {
-        "ok": 185,
-        "total": 185,
+        "ok": 196,
+        "total": 196,
         "slow": 0,
         "fails": {}
       }
@@ -200,8 +200,8 @@
         "total": 31
       },
       "2026-08-26": {
-        "ok": 185,
-        "total": 185,
+        "ok": 196,
+        "total": 196,
         "slow": 0,
         "fails": {}
       }
@@ -236,8 +236,8 @@
         "total": 31
       },
       "2026-08-26": {
-        "ok": 185,
-        "total": 185,
+        "ok": 196,
+        "total": 196,
         "slow": 0,
         "fails": {}
       }
@@ -272,8 +272,8 @@
         "total": 31
       },
       "2026-08-26": {
-        "ok": 185,
-        "total": 185,
+        "ok": 196,
+        "total": 196,
         "slow": 0,
         "fails": {}
       }
