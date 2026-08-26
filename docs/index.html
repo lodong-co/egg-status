@@ -96,6 +96,12 @@
     <span class="mark"></span><span class="txt">불러오는 중</span>
   </div>
 
+  <!--
+    status.claude.com 은 이 문장을 막대 '위' 에 둔다.
+    아래에 두면 다 훑고 나서야 「지난 기록도 있다」를 알게 된다.
+  -->
+  <p class="uptime-link">최근 90일 가동률입니다. <a href="./uptime/">지난 기록 보기</a></p>
+
   <div class="panel" id="panel"></div>
 
   <p class="panel-cap">최근 90일 기록입니다. 점검은 에그호스팅 인프라 밖에서 수행하므로,
@@ -119,10 +125,7 @@
     가동률은 화면을 따로 둔다 — 90일 바는 "지금 어떤가", 달력은 "이번 달 어땠나" 라
     보는 목적이 다르고, 한 화면에 다 넣으면 둘 다 흐려진다.
   -->
-  <nav class="tabs" id="incidents">
-    <a href="#incidents" class="on" aria-current="page">지난 인시던트</a>
-    <a href="./uptime/">가동률</a>
-  </nav>
+  <h2 class="section-title" id="incidents">지난 인시던트</h2>
   <p class="section-sub" id="incSub">최근 14일</p>
   <div id="incidentList"></div>
 

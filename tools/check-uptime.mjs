@@ -46,11 +46,13 @@ try {
   // ── 현재 상태 화면에서 가동률로 갈 수 있어야 한다
   await b.goto(SITE + '/');
   await b.until("document.querySelectorAll('.comp').length > 0");
-  const tabHref = await b.evaluate(
-    "([].slice.call(document.querySelectorAll('.tabs a')).find(function(a){return /가동률/.test(a.textContent)})||{}).getAttribute?"
-    + "[].slice.call(document.querySelectorAll('.tabs a')).find(function(a){return /가동률/.test(a.textContent)}).getAttribute('href'):'없음'",
+  const upHref = await b.evaluate(
+    "([].slice.call(document.querySelectorAll('.uptime-link a'))[0]||{}).getAttribute?"
+    + "document.querySelector('.uptime-link a').getAttribute('href'):'없음'",
   );
-  check('현재 상태에 「가동률」 탭이 있다', tabHref === './uptime/', tabHref);
+  check('막대 위에 지난 기록 링크가 있다', upHref === './uptime/', upHref);
+  check('안내 문구도 같이', /90일 가동률/.test(String(await b.evaluate("document.querySelector('.uptime-link').textContent"))),
+    String(await b.evaluate("document.querySelector('.uptime-link').textContent")).trim());
   check('인시던트 목록은 그대로 그려진다',
     Number(await b.evaluate("document.querySelectorAll('#incidentList .day').length")) > 0,
     (await b.evaluate("document.querySelectorAll('#incidentList .day').length")) + '일치');
