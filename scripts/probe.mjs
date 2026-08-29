@@ -55,7 +55,15 @@ export const TARGETS = [
     // 자체 권위 DNS(ns1/ns2.eggdomains.com, 독산DC) 위에 있어 DNS 가 죽으면 이 요청부터
     // 실패한다. 2026-07-22 · 08-07 에 실제로 그랬다.
   },
-  { id: 'login',  name: '로그인', desc: 'LD PASS 통합 로그인', url: 'https://ldpass.com/' },
+  {
+    id: 'login',
+    name: '로그인',
+    desc: 'LD PASS · 소셜 · 아이디',
+    url: 'https://ldpass.com/',
+    // 🔴 자동 점검은 LD PASS(IdP)까지만 닿는다. 카카오·구글·아이디 로그인이
+    //    죽어도 이 점검은 정상으로 보인다. 2026-08-29 카카오 26분 중단이 그랬다.
+    //    화면 쪽 기능 점검을 붙이기 전까지는 사람이 인시던트로 적어야 한다.
+  },
 ];
 
 /**
