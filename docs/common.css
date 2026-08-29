@@ -68,6 +68,7 @@
   .legend span{display:inline-flex;align-items:center;gap:6px}
   .legend i{width:9px;height:9px;border-radius:2px;display:inline-block;background:var(--nodata)}
   .legend i.ok{background:var(--ok)} .legend i.degraded{background:var(--degraded)}
+  .legend i.minor{background:var(--minor)}
   .legend i.partial{background:var(--partial)} .legend i.major{background:var(--major)}
 
   /* 호버 툴팁 */
@@ -80,6 +81,7 @@
   #tip .t-state{display:flex;align-items:center;gap:6px;font-weight:550}
   #tip .t-state i{width:8px;height:8px;border-radius:2px;display:inline-block;background:var(--nodata)}
   #tip .t-state i.ok{background:var(--ok)} #tip .t-state i.degraded{background:var(--degraded)}
+  #tip .t-state i.minor{background:var(--minor)}
   #tip .t-state i.partial{background:var(--partial)} #tip .t-state i.major{background:var(--major)}
   #tip .t-fix{margin-top:5px;padding-top:5px;border-top:1px solid var(--tip-line);color:var(--tip-muted);font-size:11px}
   #tip .t-sub{color:var(--tip-muted);font-size:12px;margin-top:2px}

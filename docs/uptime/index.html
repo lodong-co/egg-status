@@ -35,6 +35,7 @@
   .day{aspect-ratio:1;border-radius:2px;background:var(--nodata);cursor:default;
     transition:opacity .1s}
   .day.ok{background:var(--ok)} .day.degraded{background:var(--degraded)}
+  .day.minor{background:var(--minor)}
   .day.partial{background:var(--partial)} .day.major{background:var(--major)}
   .day.blank{background:transparent;cursor:default}
   .day:not(.blank):hover{opacity:.6}
@@ -76,6 +77,7 @@
   <div class="legend">
     <span><i class="ok"></i>정상</span>
     <span><i class="degraded"></i>성능 저하</span>
+    <span><i class="minor"></i>일부 기능</span>
     <span><i class="partial"></i>부분 장애</span>
     <span><i class="major"></i>전체 장애</span>
     <span><i></i>측정 없음</span>
@@ -110,6 +112,8 @@ const DOW = ['일', '월', '화', '수', '목', '금', '토'];
 
 let STATE = null;
 let CORRECTIONS = [];
+/* 사람이 적은 인시던트. 점검이 못 본 장애가 여기 담긴다. (compId → 날짜 → [인시던트]) */
+let INC_INDEX = {};
 
 /** 오늘(KST)의 연·월. 달력의 기준점이다. */
 function thisMonth() {
@@ -165,7 +169,8 @@ function monthRate(perDay, y, m) {
 }
 
 function tipFor(compId, key, cell) {
-  const g = grade(cell);
+  const incs = (INC_INDEX[compId] || {})[key] || [];
+  const g = grade(cell, incs);
   const measured = Boolean(cell && cell.total);
   const started = STATE && STATE.startedAt;
   const state = measured ? g.label : (started && key < started ? '측정 시작 전' : '측정 없음');
@@ -217,7 +222,7 @@ function render() {
       const blanks = Array.from({ length: firstDow(y, m) }, () => '<div class="day blank"></div>').join('');
       const cells = daysOf(y, m).map(({ key, future }) => {
         if (future) return '<div class="day blank"></div>';
-        const g = grade(perDay[key]);
+        const g = grade(perDay[key], (INC_INDEX[c.id] || {})[key] || []);
         return `<div class="day ${g.cls}" data-comp="${esc(c.id)}" data-key="${esc(key)}"></div>`;
       }).join('');
       return `<div class="month">
@@ -277,12 +282,41 @@ document.addEventListener('click', (e) => {
 });
 document.getElementById('feedLink').href = new URL('../feed.xml', location.href).href;
 
+/* 날짜 키를 하루 넘긴다. 인시던트가 자정을 걸치면 양쪽 날에 다 걸어야 한다. */
+function nextKey(key) {
+  const [y, m, d] = key.split('-').map(Number);
+  const t = new Date(Date.UTC(y, m - 1, d + 1));
+  return keyOf(t.getUTCFullYear(), t.getUTCMonth() + 1, t.getUTCDate());
+}
+
+/* 인시던트를 (컴포넌트, 날짜) 로 색인한다. 목록 화면과 같은 규칙이다 —
+   두 화면이 같은 날을 다른 색으로 칠하면 안 된다. */
+function indexIncidents(list, ids) {
+  const idx = {};
+  for (const id of ids) idx[id] = {};
+  for (const inc of (Array.isArray(list) ? list : [])) {
+    const targets = Array.isArray(inc.components) && inc.components.length
+      ? inc.components.filter((id) => idx[id]) : ids;
+    const from = kst(inc.startedAt).key;
+    const to = inc.resolvedAt ? kst(inc.resolvedAt).key : from;
+    for (let k = from; ; k = nextKey(k)) {
+      for (const id of targets) (idx[id][k] = idx[id][k] || []).push(inc);
+      if (k >= to) break;
+    }
+  }
+  return idx;
+}
+
 function load() {
-  fetch('../state.json', noStore)
-    .then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-    .then((state) => {
+  Promise.all([
+    fetch('../state.json', noStore)
+      .then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }),
+    fetch('../incidents.json', noStore).then((r) => (r.ok ? r.json() : [])).catch(() => []),
+  ])
+    .then(([state, incidents]) => {
       STATE = state;
       CORRECTIONS = Array.isArray(state.corrections) ? state.corrections : [];
+      INC_INDEX = indexIncidents(incidents, (state.components || []).map((c) => c.id));
       render();
     })
     .catch(() => {

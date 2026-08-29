@@ -62,13 +62,22 @@ check('옛 기록도 정상으로 친다', grade(legacy).label, '정상');
 const clean = { ok: 153, total: 153, slow: 0, confirmed: 0, fails: {} };
 const kakao = [{ impact: 'minor', downMinutes: 27 }];
 
-check('점검이 못 본 장애도 등급에 든다', grade(clean, kakao).label, '성능 저하');
+/*
+  「얼마나」와 「무엇이」는 다른 축이다. 26분이라는 양만 보면 「성능 저하」로
+  접히는데, 느렸던 게 아니라 기능 하나가 죽은 것이라 그 이름은 틀렸다.
+*/
+check('기능 장애는 성능 저하가 아니다', grade(clean, kakao).label, '일부 기능');
+check('색도 따로 쓴다', grade(clean, kakao).cls, 'minor');
 check('그 시간이 다운타임으로 나온다', downtimeText(clean, kakao), '다운타임 약 27분');
 check('인시던트가 없으면 그대로 정상', grade(clean, []).label, '정상');
 check('인시던트를 안 넘겨도 안 깨진다', grade(clean).label, '정상');
 
 const big = [{ impact: 'major', downMinutes: 800 }];
-check('오래 죽었으면 부분 장애 이상', ['부분 장애', '전체 장애'].includes(grade(clean, big).label), true);
+check('전체 장애는 전체 장애로', grade(clean, big).label, '전체 장애');
+
+/* 점검이 이미 더 나쁘게 보고 있으면 인시던트가 그걸 덮어 좋게 만들면 안 된다. */
+const halfDead = { ok: 60, total: 153, slow: 0, confirmed: 93, fails: { timeout: 93 } };
+check('나쁜 쪽이 남는다', grade(halfDead, kakao).label, '전체 장애');
 
 // 하루보다 긴 값을 적어도 하루를 넘지 않는다
 const absurd = [{ impact: 'major', downMinutes: 99999 }];

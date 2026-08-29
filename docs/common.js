@@ -94,16 +94,57 @@ function badSamples(cell, incidents) {
 }
 
 /* 하루치 집계를 상태 등급으로 접는다. 경계는 Statuspage 관행. */
-function grade(cell, incidents) {
-  if (!cell || !cell.total) return { cls: 'nodata', label: '측정 없음' };
-  const r = (cell.total - badSamples(cell, incidents)) / cell.total;
-  if (r < 0.5) return { cls: 'major', label: '전체 장애' };
-  if (r < 0.95) return { cls: 'partial', label: '부분 장애' };
-  if (r < 1) return { cls: 'degraded', label: '성능 저하' };
+const GRADE_LABEL = {
+  ok: '정상',
+  degraded: '성능 저하',
+  minor: '일부 기능',
+  partial: '부분 장애',
+  major: '전체 장애',
+  nodata: '측정 없음',
+};
+
+/* 어느 쪽이 더 나쁜가. 두 판정이 부딪히면 나쁜 쪽을 남긴다. */
+const GRADE_RANK = { nodata: -1, ok: 0, degraded: 1, minor: 2, partial: 3, major: 4 };
+
+/* 점검이 잰 것만으로 매기는 등급. 「얼마나」의 축이다. */
+function probeGrade(cell) {
+  const r = (cell.total - confirmedFails(cell)) / cell.total;
+  if (r < 0.5) return { cls: 'major', label: GRADE_LABEL.major };
+  if (r < 0.95) return { cls: 'partial', label: GRADE_LABEL.partial };
+  if (r < 1) return { cls: 'degraded', label: GRADE_LABEL.degraded };
   /* 다 떴지만 느렸던 날. 200 이라고 다 정상은 아니다 —
      트래픽이 몰려 응답이 늘어진 날을 초록으로 칠하면 그 날을 통째로 놓친다. */
   if ((cell.slow || 0) / cell.total >= 0.1) return { cls: 'degraded', label: '응답 지연' };
-  return { cls: 'ok', label: '정상' };
+  return { cls: 'ok', label: GRADE_LABEL.ok };
+}
+
+/*
+  하루치를 상태 등급으로 접는다. 경계는 Statuspage 관행.
+
+  <b>「얼마나」와 「무엇이」는 다른 축이다.</b> 점검이 잰 실패율은 얼마나 나빴는지를
+  말하고, 사람이 적은 인시던트는 무엇이 고장났는지를 말한다. 2026-08-29 카카오
+  로그인은 26분이라는 양만 보면 「성능 저하」로 접히는데, 느렸던 게 아니라 기능
+  하나가 죽은 것이라 그 이름은 틀렸다. 그래서 인시던트가 있으면 그 종류를 쓴다.
+
+  둘이 부딪히면 나쁜 쪽을 남긴다 — 점검이 반쯤 죽었다고 말하는 날을
+  「일부 기능」으로 덮으면 실제보다 좋게 말하는 것이다.
+*/
+function grade(cell, incidents) {
+  if (!cell || !cell.total) return { cls: 'nodata', label: GRADE_LABEL.nodata };
+
+  const byProbe = probeGrade(cell);
+
+  let worst = null;
+  for (const i of (Array.isArray(incidents) ? incidents : [])) {
+    const cls = GRADE_LABEL[i && i.impact] ? i.impact : null;
+    if (!cls) continue;
+    if (!worst || GRADE_RANK[cls] > GRADE_RANK[worst]) worst = cls;
+  }
+  if (!worst) return byProbe;
+
+  return GRADE_RANK[worst] > GRADE_RANK[byProbe.cls]
+    ? { cls: worst, label: GRADE_LABEL[worst] }
+    : byProbe;
 }
 
 /* 실패 원인. 프로브가 남긴 한 단어를 사람 말로 편다. */
