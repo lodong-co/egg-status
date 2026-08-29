@@ -58,6 +58,14 @@
   .inc{margin-top:16px}
   .inc:first-of-type{margin-top:0}
   .inc-title{font-size:14px;font-weight:600;letter-spacing:-.005em;margin-bottom:7px}
+  /* 영향 범위 뱃지. 막대와 같은 색을 쓴다 — 같은 뜻에 다른 색을 쓰면 헷갈린다.
+     배경은 색을 옅게 깔고 글자만 진하게. 꽉 찬 색 덩어리는 제목보다 세다. */
+  .inc-badge{display:inline-block;margin-right:7px;padding:1px 7px;border-radius:10px;
+    font-size:11.5px;font-weight:700;letter-spacing:0;vertical-align:1px;
+    color:var(--major);background:color-mix(in srgb,var(--major) 13%,transparent)}
+  .inc-badge.partial{color:var(--partial);background:color-mix(in srgb,var(--partial) 13%,transparent)}
+  .inc-badge.minor,
+  .inc-badge.degraded{color:var(--degraded);background:color-mix(in srgb,var(--degraded) 15%,transparent)}
   .inc-updates{margin:0;padding:0;list-style:none}
   .inc-updates li{padding:6px 0 6px 13px;border-left:2px solid var(--line);font-size:13px}
   .inc-updates b{font-weight:600;font-size:12.5px;margin-right:7px}
@@ -146,13 +154,13 @@
 <script>
 const INCIDENT_DAYS = 15; // "지난 인시던트" 에서 날짜별로 훑을 일수. status.claude.com 과 동일.
 
-function uptimeText(perDay) {
+function uptimeText(perDay, compId) {
   /* 막대 색과 같은 기준으로 센다. 초록으로 칠해 놓고 %만 깎으면 앞뒤가 안 맞는다. */
   let ok = 0, total = 0;
   for (const key of dayKeys(DAYS)) {
     const c = perDay[key];
     if (!c || !c.total) continue;
-    ok += c.total - confirmedFails(c); total += c.total;
+    ok += c.total - badSamples(c, (INC_INDEX[compId] || {})[key] || []); total += c.total;
   }
   if (!total) return '측정 데이터 없음';
   const pct = (ok / total) * 100;
@@ -185,7 +193,8 @@ function buildIncidentIndex(list, componentIds) {
 /* ── 툴팁 ── */
 
 function tipHtml(compId, key, cell, startedAt) {
-  const g = grade(cell);
+  const incs0 = (INC_INDEX[compId] || {})[key] || [];
+  const g = grade(cell, incs0);
   const measured = !!(cell && cell.total);
   const state = measured ? g.label : (startedAt && key < startedAt ? '측정 시작 전' : '측정 없음');
   const sub = measured && SHOW_UPTIME ? downtimeText(cell)
@@ -205,7 +214,7 @@ function tipHtml(compId, key, cell, startedAt) {
   const fixHtml = fix ? `<div class="t-fix">보정됨 · ${esc(fix.reason)}</div>` : '';
 
   /* status.claude.com 은 "Related" 아래에 그날 걸린 인시던트 제목을 나열한다. */
-  const incs = (INC_INDEX[compId] || {})[key] || [];
+  const incs = incs0;
   const incHtml = incs.length
     ? `<div class="t-inc"><span class="t-inc-h">관련</span>${
         incs.map((i) => `<b>${esc(i.title)}</b>`).join('')}</div>`
@@ -233,7 +242,7 @@ function renderComponents(state) {
     const stateLabel = !c.up ? '장애' : slowNow ? '느림' : '정상';
     const segs = keys.map((key) => {
       const cell = perDay[key];
-      const g = grade(cell);
+      const g = grade(cell, (INC_INDEX[c.id] || {})[key] || []);
       return `<div class="seg ${g.cls}" data-comp="${esc(c.id)}" data-key="${esc(key)}"></div>`;
     }).join('');
 
@@ -245,7 +254,7 @@ function renderComponents(state) {
       <div class="bars">${segs}</div>
       <div class="axis">
         <span>${DAYS}일 전</span>
-        ${SHOW_UPTIME ? `<span class="uptime">최근 ${DAYS}일 ${esc(uptimeText(perDay))}</span>` : '<span></span>'}
+        ${SHOW_UPTIME ? `<span class="uptime">최근 ${DAYS}일 ${esc(uptimeText(perDay, c.id))}</span>` : '<span></span>'}
         <span>오늘</span>
       </div>
     </div>`;
@@ -281,6 +290,10 @@ function renderBanner(state) {
 
 const INC_STAGE = { investigating: '원인 확인 중', identified: '원인 파악', monitoring: '경과 관찰', resolved: '해결' };
 
+/* 영향 범위. 막대 색과 같은 말을 쓴다 — 상태판 안에서 말이 갈리면 안 된다.
+   minor 는 「서비스는 도는데 기능 하나가 안 되는」 경우다. 소셜 로그인 같은 것. */
+const INC_IMPACT = { major: '전체 장애', partial: '부분 장애', minor: '일부 기능', degraded: '성능 저하' };
+
 /* status.claude.com 과 같은 형태 — 날짜별로 훑고, 조용한 날은 그렇다고 적는다.
    최신 날짜가 위로 오고, 한 인시던트 안에서는 최신 업데이트(해결)가 위로 온다. */
 function renderIncidents() {
@@ -301,8 +314,15 @@ function renderIncidents() {
         .map((u) => `<li>
           <b>${esc(INC_STAGE[u.status] || u.status || '')}</b>· ${esc(u.body || '')}
           <time>${esc(fmtKst(u.at))}</time></li>`).join('');
+      /* 영향 범위를 색으로 먼저 보인다. 「전체가 죽었나 기능 하나인가」가
+         제목을 읽기 전에 구분돼야 한다. */
+      /* 영향 범위를 색으로 먼저 보인다. 「전체가 죽었나 기능 하나인가」가
+         제목을 읽기 전에 구분돼야 한다. */
+      const badge = INC_IMPACT[inc.impact]
+        ? `<span class="inc-badge ${esc(inc.impact)}">${esc(INC_IMPACT[inc.impact])}</span>`
+        : '';
       return `<div class="inc">
-        <div class="inc-title">${esc(inc.title)}</div>
+        <div class="inc-title">${badge}${esc(inc.title)}</div>
         <ul class="inc-updates">${updates}</ul>
       </div>`;
     }).join('');

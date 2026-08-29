@@ -68,10 +68,35 @@ function confirmedFails(cell) {
   return cell && typeof cell.confirmed === 'number' ? cell.confirmed : 0;
 }
 
+/*
+  점검으로는 안 보였지만 실제로 죽어 있던 시간(분).
+
+  바깥에서 200 만 보는 점검은 「페이지는 뜨는데 버튼만 죽은」 고장을 못 본다.
+  2026-08-29 카카오 로그인이 그랬다 — 26분 41초 동안 로그인이 안 됐는데
+  점검은 내내 정상이었고 상태판은 가동률 100% 라고 말했다. 실제보다 좋게
+  말한 것이라, 사람이 적어 넣은 인시던트의 시간을 여기서 같이 센다.
+
+  인시던트에 downMinutes 를 적으면 그날 등급·다운타임·가동률에 반영된다.
+*/
+function manualDownMinutes(incidents) {
+  if (!Array.isArray(incidents)) return 0;
+  return incidents.reduce((sum, i) => sum + (Number(i && i.downMinutes) || 0), 0);
+}
+
+/*
+  그날 「나쁜 것」의 크기를 점검 횟수로 환산한다.
+  점검이 잡은 것(confirmed)과 사람이 적은 시간(분)을 같은 자로 잰다.
+*/
+function badSamples(cell, incidents) {
+  const perSample = cell && cell.total ? 1440 / cell.total : 0;
+  const manual = perSample ? manualDownMinutes(incidents) / perSample : 0;
+  return Math.min(cell ? cell.total : 0, confirmedFails(cell) + manual);
+}
+
 /* 하루치 집계를 상태 등급으로 접는다. 경계는 Statuspage 관행. */
-function grade(cell) {
+function grade(cell, incidents) {
   if (!cell || !cell.total) return { cls: 'nodata', label: '측정 없음' };
-  const r = (cell.total - confirmedFails(cell)) / cell.total;
+  const r = (cell.total - badSamples(cell, incidents)) / cell.total;
   if (r < 0.5) return { cls: 'major', label: '전체 장애' };
   if (r < 0.95) return { cls: 'partial', label: '부분 장애' };
   if (r < 1) return { cls: 'degraded', label: '성능 저하' };
@@ -120,9 +145,9 @@ function causeText(cell) {
 
 /* 실패한 점검 비율을 하루(24h)에 대입한 근사치. 점검 간격이 일정하지 않아
    정확한 값이 아니므로 "약" 을 붙여 표시한다. */
-function downtimeText(cell) {
+function downtimeText(cell, incidents) {
   if (!cell || !cell.total) return '';
-  const fail = confirmedFails(cell);
+  const fail = badSamples(cell, incidents);
   if (fail <= 0) return '기록된 다운타임 없음';
   const mins = Math.round((fail / cell.total) * 1440);
   if (mins < 60) return `다운타임 약 ${mins}분`;

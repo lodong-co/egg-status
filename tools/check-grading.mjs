@@ -52,5 +52,27 @@ check('느린 날은 응답 지연', grade(slow).label, '응답 지연');
 const legacy = { ok: 254, total: 255, slow: 0, fails: { timeout: 1 } };
 check('옛 기록도 정상으로 친다', grade(legacy).label, '정상');
 
-console.log(`\n  통과 ${ok} · 실패 ${no}`);
+
+/*
+  사람이 적어 넣은 인시던트가 그날 판정에 반영되는가.
+
+  바깥에서 200 만 보는 점검은 「페이지는 뜨는데 버튼만 죽은」 고장을 못 본다.
+  그런 날을 초록으로 두고 가동률 100% 라고 쓰면 실제보다 좋게 말하는 것이다.
+*/
+const clean = { ok: 153, total: 153, slow: 0, confirmed: 0, fails: {} };
+const kakao = [{ impact: 'minor', downMinutes: 27 }];
+
+check('점검이 못 본 장애도 등급에 든다', grade(clean, kakao).label, '성능 저하');
+check('그 시간이 다운타임으로 나온다', downtimeText(clean, kakao), '다운타임 약 27분');
+check('인시던트가 없으면 그대로 정상', grade(clean, []).label, '정상');
+check('인시던트를 안 넘겨도 안 깨진다', grade(clean).label, '정상');
+
+const big = [{ impact: 'major', downMinutes: 800 }];
+check('오래 죽었으면 부분 장애 이상', ['부분 장애', '전체 장애'].includes(grade(clean, big).label), true);
+
+// 하루보다 긴 값을 적어도 하루를 넘지 않는다
+const absurd = [{ impact: 'major', downMinutes: 99999 }];
+check('하루를 넘지 않는다', downtimeText(clean, absurd), '다운타임 약 24시간');
+
+console.log(`\n  (인시던트 반영 포함) 통과 ${ok} · 실패 ${no}`);
 process.exit(no === 0 ? 0 : 1);
