@@ -1,1 +1,465 @@
-{"schema":1,"startedAt":"2026-08-19","updatedAt":"2026-08-29T08:34:35.643Z","components":[{"id":"console","name":"관리 콘솔","desc":"대시보드 · API","up":true,"statusCode":200,"latencyMs":677,"slow":false,"unmeasured":false,"reason":null,"error":null,"downStreak":0,"downSince":null,"firstOkAt":"2026-08-25T23:25:28.831Z","slowMs":4000,"changedAt":"2026-08-26T20:40:08.267Z"},{"id":"web","name":"웹호스팅","desc":"웹호스팅 플랫폼","up":true,"statusCode":200,"latencyMs":665,"slow":false,"unmeasured":false,"reason":null,"error":null,"downStreak":0,"downSince":null,"firstOkAt":"2026-08-25T23:25:28.831Z","slowMs":4000,"changedAt":"2026-08-19T13:22:34.828Z"},{"id":"cloud","name":"클라우드 서버","desc":"클라우드 VM 플랫폼","up":true,"statusCode":200,"latencyMs":1579,"slow":false,"unmeasured":false,"reason":null,"error":null,"downStreak":0,"downSince":null,"firstOkAt":"2026-08-25T23:25:28.831Z","slowMs":4000,"changedAt":"2026-08-19T13:22:34.828Z"},{"id":"domain","name":"도메인","desc":"도메인 등록 · DNS","up":true,"statusCode":200,"latencyMs":882,"slow":false,"unmeasured":false,"reason":null,"error":null,"downStreak":0,"downSince":null,"firstOkAt":"2026-08-25T23:25:28.831Z","slowMs":4000,"changedAt":"2026-08-26T20:40:08.267Z"},{"id":"login","name":"로그인","desc":"LD PASS 통합 로그인","up":true,"statusCode":200,"latencyMs":1010,"slow":false,"unmeasured":false,"reason":null,"error":null,"downStreak":0,"downSince":null,"firstOkAt":"2026-08-25T23:25:28.831Z","slowMs":4000,"changedAt":"2026-08-26T20:40:08.267Z"}],"daily":{"console":{"2026-08-19":{"ok":4,"total":4,"fails":{"probe-404":4},"slow":0,"confirmed":0},"2026-08-20":{"ok":36,"total":36,"fails":{"probe-404":26},"slow":0,"confirmed":0},"2026-08-21":{"ok":34,"total":34,"confirmed":0},"2026-08-22":{"ok":40,"total":40,"confirmed":0},"2026-08-23":{"ok":42,"total":42,"confirmed":0},"2026-08-24":{"ok":35,"total":35,"confirmed":0},"2026-08-25":{"ok":31,"total":31,"confirmed":0},"2026-08-26":{"ok":479,"total":479,"slow":0,"fails":{},"confirmed":0},"2026-08-27":{"ok":254,"total":255,"slow":0,"fails":{"timeout":1},"confirmed":0},"2026-08-28":{"ok":102,"total":102,"slow":0,"fails":{},"confirmed":0},"2026-08-29":{"ok":153,"total":153,"slow":0,"fails":{},"confirmed":0}},"web":{"2026-08-19":{"ok":4,"total":4,"confirmed":0},"2026-08-20":{"ok":36,"total":36,"confirmed":0},"2026-08-21":{"ok":34,"total":34,"confirmed":0},"2026-08-22":{"ok":40,"total":40,"confirmed":0},"2026-08-23":{"ok":42,"total":42,"confirmed":0},"2026-08-24":{"ok":35,"total":35,"confirmed":0},"2026-08-25":{"ok":31,"total":31,"confirmed":0},"2026-08-26":{"ok":479,"total":479,"slow":0,"fails":{},"confirmed":0},"2026-08-27":{"ok":255,"total":255,"slow":0,"fails":{},"confirmed":0},"2026-08-28":{"ok":102,"total":102,"slow":0,"fails":{},"confirmed":0},"2026-08-29":{"ok":153,"total":153,"slow":0,"fails":{},"confirmed":0}},"cloud":{"2026-08-19":{"ok":4,"total":4,"confirmed":0},"2026-08-20":{"ok":36,"total":36,"confirmed":0},"2026-08-21":{"ok":34,"total":34,"confirmed":0},"2026-08-22":{"ok":40,"total":40,"confirmed":0},"2026-08-23":{"ok":42,"total":42,"confirmed":0},"2026-08-24":{"ok":35,"total":35,"confirmed":0},"2026-08-25":{"ok":31,"total":31,"confirmed":0},"2026-08-26":{"ok":479,"total":479,"slow":0,"fails":{},"confirmed":0},"2026-08-27":{"ok":255,"total":255,"slow":0,"fails":{},"confirmed":0},"2026-08-28":{"ok":102,"total":102,"slow":0,"fails":{},"confirmed":0},"2026-08-29":{"ok":153,"total":153,"slow":0,"fails":{},"confirmed":0}},"domain":{"2026-08-19":{"ok":4,"total":4,"confirmed":0},"2026-08-20":{"ok":36,"total":36,"confirmed":0},"2026-08-21":{"ok":34,"total":34,"confirmed":0},"2026-08-22":{"ok":40,"total":40,"confirmed":0},"2026-08-23":{"ok":42,"total":42,"confirmed":0},"2026-08-24":{"ok":35,"total":35,"confirmed":0},"2026-08-25":{"ok":31,"total":31,"confirmed":0},"2026-08-26":{"ok":479,"total":479,"slow":0,"fails":{},"confirmed":0},"2026-08-27":{"ok":254,"total":255,"slow":0,"fails":{"timeout":1},"confirmed":0},"2026-08-28":{"ok":102,"total":102,"slow":0,"fails":{},"confirmed":0},"2026-08-29":{"ok":153,"total":153,"slow":0,"fails":{},"confirmed":0}},"login":{"2026-08-19":{"ok":4,"total":4,"confirmed":0},"2026-08-20":{"ok":36,"total":36,"confirmed":0},"2026-08-21":{"ok":34,"total":34,"confirmed":0},"2026-08-22":{"ok":40,"total":40,"confirmed":0},"2026-08-23":{"ok":42,"total":42,"confirmed":0},"2026-08-24":{"ok":35,"total":35,"confirmed":0},"2026-08-25":{"ok":31,"total":31,"confirmed":0},"2026-08-26":{"ok":479,"total":479,"slow":0,"fails":{},"confirmed":0},"2026-08-27":{"ok":254,"total":255,"slow":0,"fails":{"timeout":1},"confirmed":0},"2026-08-28":{"ok":102,"total":102,"slow":0,"fails":{},"confirmed":0},"2026-08-29":{"ok":153,"total":153,"slow":0,"fails":{},"confirmed":0}}},"corrections":[{"component":"console","day":"2026-08-19","reason":"점검 주소 오류 — 헬스 엔드포인트 배포 전이라 404. 장애 아님","at":"2026-08-26T00:00:00.000Z"},{"component":"console","day":"2026-08-20","reason":"점검 주소 오류 — 헬스 엔드포인트 배포 전이라 404. 장애 아님","at":"2026-08-26T00:00:00.000Z"},{"component":"console","day":"2026-08-27","reason":"점검 1회 실패 후 다음 점검에서 바로 정상. 서로 다른 공인 IP 를 쓰는 셋이 동시에 한 번씩 실패했고 우리 감시에는 기록이 없다 — 점검하는 쪽의 일시적 네트워크 문제로 본다.","at":"2026-08-29T00:00:00.000Z"},{"component":"domain","day":"2026-08-27","reason":"점검 1회 실패 후 다음 점검에서 바로 정상. 서로 다른 공인 IP 를 쓰는 셋이 동시에 한 번씩 실패했고 우리 감시에는 기록이 없다 — 점검하는 쪽의 일시적 네트워크 문제로 본다.","at":"2026-08-29T00:00:00.000Z"},{"component":"login","day":"2026-08-27","reason":"점검 1회 실패 후 다음 점검에서 바로 정상. 서로 다른 공인 IP 를 쓰는 셋이 동시에 한 번씩 실패했고 우리 감시에는 기록이 없다 — 점검하는 쪽의 일시적 네트워크 문제로 본다.","at":"2026-08-29T00:00:00.000Z"}]}
+{
+  "schema": 1,
+  "startedAt": "2026-08-19",
+  "updatedAt": "2026-08-29T13:23:45.271Z",
+  "components": [
+    {
+      "id": "console",
+      "name": "관리 콘솔",
+      "desc": "대시보드 · API",
+      "up": true,
+      "statusCode": 200,
+      "latencyMs": 934,
+      "slow": false,
+      "unmeasured": false,
+      "reason": null,
+      "error": null,
+      "downStreak": 0,
+      "downSince": null,
+      "firstOkAt": "2026-08-25T23:25:28.831Z",
+      "slowMs": 4000,
+      "changedAt": "2026-08-26T20:40:08.267Z"
+    },
+    {
+      "id": "web",
+      "name": "웹호스팅",
+      "desc": "웹호스팅 플랫폼",
+      "up": true,
+      "statusCode": 200,
+      "latencyMs": 1368,
+      "slow": false,
+      "unmeasured": false,
+      "reason": null,
+      "error": null,
+      "downStreak": 0,
+      "downSince": null,
+      "firstOkAt": "2026-08-25T23:25:28.831Z",
+      "slowMs": 4000,
+      "changedAt": "2026-08-19T13:22:34.828Z"
+    },
+    {
+      "id": "cloud",
+      "name": "클라우드 서버",
+      "desc": "클라우드 VM 플랫폼",
+      "up": true,
+      "statusCode": 200,
+      "latencyMs": 2034,
+      "slow": false,
+      "unmeasured": false,
+      "reason": null,
+      "error": null,
+      "downStreak": 0,
+      "downSince": null,
+      "firstOkAt": "2026-08-25T23:25:28.831Z",
+      "slowMs": 4000,
+      "changedAt": "2026-08-19T13:22:34.828Z"
+    },
+    {
+      "id": "domain",
+      "name": "도메인",
+      "desc": "도메인 등록 · DNS",
+      "up": true,
+      "statusCode": 200,
+      "latencyMs": 1752,
+      "slow": false,
+      "unmeasured": false,
+      "reason": null,
+      "error": null,
+      "downStreak": 0,
+      "downSince": null,
+      "firstOkAt": "2026-08-25T23:25:28.831Z",
+      "slowMs": 4000,
+      "changedAt": "2026-08-26T20:40:08.267Z"
+    },
+    {
+      "id": "login",
+      "name": "로그인",
+      "desc": "LD PASS · 소셜 · 아이디",
+      "up": true,
+      "statusCode": 200,
+      "latencyMs": 1846,
+      "slow": false,
+      "unmeasured": false,
+      "reason": null,
+      "error": null,
+      "downStreak": 0,
+      "downSince": null,
+      "firstOkAt": "2026-08-25T23:25:28.831Z",
+      "slowMs": 4000,
+      "changedAt": "2026-08-26T20:40:08.267Z"
+    }
+  ],
+  "daily": {
+    "console": {
+      "2026-08-19": {
+        "ok": 4,
+        "total": 4,
+        "fails": {
+          "probe-404": 4
+        },
+        "slow": 0,
+        "confirmed": 0
+      },
+      "2026-08-20": {
+        "ok": 36,
+        "total": 36,
+        "fails": {
+          "probe-404": 26
+        },
+        "slow": 0,
+        "confirmed": 0
+      },
+      "2026-08-21": {
+        "ok": 34,
+        "total": 34,
+        "confirmed": 0
+      },
+      "2026-08-22": {
+        "ok": 40,
+        "total": 40,
+        "confirmed": 0
+      },
+      "2026-08-23": {
+        "ok": 42,
+        "total": 42,
+        "confirmed": 0
+      },
+      "2026-08-24": {
+        "ok": 35,
+        "total": 35,
+        "confirmed": 0
+      },
+      "2026-08-25": {
+        "ok": 31,
+        "total": 31,
+        "confirmed": 0
+      },
+      "2026-08-26": {
+        "ok": 479,
+        "total": 479,
+        "slow": 0,
+        "fails": {},
+        "confirmed": 0
+      },
+      "2026-08-27": {
+        "ok": 254,
+        "total": 255,
+        "slow": 0,
+        "fails": {
+          "timeout": 1
+        },
+        "confirmed": 0
+      },
+      "2026-08-28": {
+        "ok": 102,
+        "total": 102,
+        "slow": 0,
+        "fails": {},
+        "confirmed": 0
+      },
+      "2026-08-29": {
+        "ok": 154,
+        "total": 154,
+        "slow": 0,
+        "fails": {},
+        "confirmed": 0
+      }
+    },
+    "web": {
+      "2026-08-19": {
+        "ok": 4,
+        "total": 4,
+        "confirmed": 0
+      },
+      "2026-08-20": {
+        "ok": 36,
+        "total": 36,
+        "confirmed": 0
+      },
+      "2026-08-21": {
+        "ok": 34,
+        "total": 34,
+        "confirmed": 0
+      },
+      "2026-08-22": {
+        "ok": 40,
+        "total": 40,
+        "confirmed": 0
+      },
+      "2026-08-23": {
+        "ok": 42,
+        "total": 42,
+        "confirmed": 0
+      },
+      "2026-08-24": {
+        "ok": 35,
+        "total": 35,
+        "confirmed": 0
+      },
+      "2026-08-25": {
+        "ok": 31,
+        "total": 31,
+        "confirmed": 0
+      },
+      "2026-08-26": {
+        "ok": 479,
+        "total": 479,
+        "slow": 0,
+        "fails": {},
+        "confirmed": 0
+      },
+      "2026-08-27": {
+        "ok": 255,
+        "total": 255,
+        "slow": 0,
+        "fails": {},
+        "confirmed": 0
+      },
+      "2026-08-28": {
+        "ok": 102,
+        "total": 102,
+        "slow": 0,
+        "fails": {},
+        "confirmed": 0
+      },
+      "2026-08-29": {
+        "ok": 154,
+        "total": 154,
+        "slow": 0,
+        "fails": {},
+        "confirmed": 0
+      }
+    },
+    "cloud": {
+      "2026-08-19": {
+        "ok": 4,
+        "total": 4,
+        "confirmed": 0
+      },
+      "2026-08-20": {
+        "ok": 36,
+        "total": 36,
+        "confirmed": 0
+      },
+      "2026-08-21": {
+        "ok": 34,
+        "total": 34,
+        "confirmed": 0
+      },
+      "2026-08-22": {
+        "ok": 40,
+        "total": 40,
+        "confirmed": 0
+      },
+      "2026-08-23": {
+        "ok": 42,
+        "total": 42,
+        "confirmed": 0
+      },
+      "2026-08-24": {
+        "ok": 35,
+        "total": 35,
+        "confirmed": 0
+      },
+      "2026-08-25": {
+        "ok": 31,
+        "total": 31,
+        "confirmed": 0
+      },
+      "2026-08-26": {
+        "ok": 479,
+        "total": 479,
+        "slow": 0,
+        "fails": {},
+        "confirmed": 0
+      },
+      "2026-08-27": {
+        "ok": 255,
+        "total": 255,
+        "slow": 0,
+        "fails": {},
+        "confirmed": 0
+      },
+      "2026-08-28": {
+        "ok": 102,
+        "total": 102,
+        "slow": 0,
+        "fails": {},
+        "confirmed": 0
+      },
+      "2026-08-29": {
+        "ok": 154,
+        "total": 154,
+        "slow": 0,
+        "fails": {},
+        "confirmed": 0
+      }
+    },
+    "domain": {
+      "2026-08-19": {
+        "ok": 4,
+        "total": 4,
+        "confirmed": 0
+      },
+      "2026-08-20": {
+        "ok": 36,
+        "total": 36,
+        "confirmed": 0
+      },
+      "2026-08-21": {
+        "ok": 34,
+        "total": 34,
+        "confirmed": 0
+      },
+      "2026-08-22": {
+        "ok": 40,
+        "total": 40,
+        "confirmed": 0
+      },
+      "2026-08-23": {
+        "ok": 42,
+        "total": 42,
+        "confirmed": 0
+      },
+      "2026-08-24": {
+        "ok": 35,
+        "total": 35,
+        "confirmed": 0
+      },
+      "2026-08-25": {
+        "ok": 31,
+        "total": 31,
+        "confirmed": 0
+      },
+      "2026-08-26": {
+        "ok": 479,
+        "total": 479,
+        "slow": 0,
+        "fails": {},
+        "confirmed": 0
+      },
+      "2026-08-27": {
+        "ok": 254,
+        "total": 255,
+        "slow": 0,
+        "fails": {
+          "timeout": 1
+        },
+        "confirmed": 0
+      },
+      "2026-08-28": {
+        "ok": 102,
+        "total": 102,
+        "slow": 0,
+        "fails": {},
+        "confirmed": 0
+      },
+      "2026-08-29": {
+        "ok": 154,
+        "total": 154,
+        "slow": 0,
+        "fails": {},
+        "confirmed": 0
+      }
+    },
+    "login": {
+      "2026-08-19": {
+        "ok": 4,
+        "total": 4,
+        "confirmed": 0
+      },
+      "2026-08-20": {
+        "ok": 36,
+        "total": 36,
+        "confirmed": 0
+      },
+      "2026-08-21": {
+        "ok": 34,
+        "total": 34,
+        "confirmed": 0
+      },
+      "2026-08-22": {
+        "ok": 40,
+        "total": 40,
+        "confirmed": 0
+      },
+      "2026-08-23": {
+        "ok": 42,
+        "total": 42,
+        "confirmed": 0
+      },
+      "2026-08-24": {
+        "ok": 35,
+        "total": 35,
+        "confirmed": 0
+      },
+      "2026-08-25": {
+        "ok": 31,
+        "total": 31,
+        "confirmed": 0
+      },
+      "2026-08-26": {
+        "ok": 479,
+        "total": 479,
+        "slow": 0,
+        "fails": {},
+        "confirmed": 0
+      },
+      "2026-08-27": {
+        "ok": 254,
+        "total": 255,
+        "slow": 0,
+        "fails": {
+          "timeout": 1
+        },
+        "confirmed": 0
+      },
+      "2026-08-28": {
+        "ok": 102,
+        "total": 102,
+        "slow": 0,
+        "fails": {},
+        "confirmed": 0
+      },
+      "2026-08-29": {
+        "ok": 154,
+        "total": 154,
+        "slow": 0,
+        "fails": {},
+        "confirmed": 0
+      }
+    }
+  },
+  "corrections": [
+    {
+      "component": "console",
+      "day": "2026-08-19",
+      "reason": "점검 주소 오류 — 헬스 엔드포인트 배포 전이라 404. 장애 아님",
+      "at": "2026-08-26T00:00:00.000Z"
+    },
+    {
+      "component": "console",
+      "day": "2026-08-20",
+      "reason": "점검 주소 오류 — 헬스 엔드포인트 배포 전이라 404. 장애 아님",
+      "at": "2026-08-26T00:00:00.000Z"
+    },
+    {
+      "component": "console",
+      "day": "2026-08-27",
+      "reason": "점검 1회 실패 후 다음 점검에서 바로 정상. 서로 다른 공인 IP 를 쓰는 셋이 동시에 한 번씩 실패했고 우리 감시에는 기록이 없다 — 점검하는 쪽의 일시적 네트워크 문제로 본다.",
+      "at": "2026-08-29T00:00:00.000Z"
+    },
+    {
+      "component": "domain",
+      "day": "2026-08-27",
+      "reason": "점검 1회 실패 후 다음 점검에서 바로 정상. 서로 다른 공인 IP 를 쓰는 셋이 동시에 한 번씩 실패했고 우리 감시에는 기록이 없다 — 점검하는 쪽의 일시적 네트워크 문제로 본다.",
+      "at": "2026-08-29T00:00:00.000Z"
+    },
+    {
+      "component": "login",
+      "day": "2026-08-27",
+      "reason": "점검 1회 실패 후 다음 점검에서 바로 정상. 서로 다른 공인 IP 를 쓰는 셋이 동시에 한 번씩 실패했고 우리 감시에는 기록이 없다 — 점검하는 쪽의 일시적 네트워크 문제로 본다.",
+      "at": "2026-08-29T00:00:00.000Z"
+    }
+  ]
+}
