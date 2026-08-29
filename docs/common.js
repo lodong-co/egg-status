@@ -54,10 +54,24 @@ function dayKeys(n) {
   return out;
 }
 
+/*
+  그날 장애로 인정한 점검 수.
+
+  한 번 실패하고 다음에 바로 돌아온 것은 세지 않는다. 대개 점검하는 쪽의
+  순간적인 네트워크 문제이고, 그 한 번이 255분의 1이어도 하루를 물들였다.
+  프로브가 연속 두 번부터 세어 confirmed 에 담는다.
+
+  옛 기록에는 이 값이 없다. 그때는 실패를 전부 셌는데, 지금 기준으로는
+  장애로 인정한 적이 없는 날들이라 0 으로 본다.
+*/
+function confirmedFails(cell) {
+  return cell && typeof cell.confirmed === 'number' ? cell.confirmed : 0;
+}
+
 /* 하루치 집계를 상태 등급으로 접는다. 경계는 Statuspage 관행. */
 function grade(cell) {
   if (!cell || !cell.total) return { cls: 'nodata', label: '측정 없음' };
-  const r = cell.ok / cell.total;
+  const r = (cell.total - confirmedFails(cell)) / cell.total;
   if (r < 0.5) return { cls: 'major', label: '전체 장애' };
   if (r < 0.95) return { cls: 'partial', label: '부분 장애' };
   if (r < 1) return { cls: 'degraded', label: '성능 저하' };
@@ -91,14 +105,24 @@ function causeText(cell) {
   const parts = Object.entries(fails)
     .sort((a, b) => b[1] - a[1])
     .map(([k, v]) => reasonLabel(k) + ' ' + v + '회');
-  return parts.join(' · ');
+  if (!parts.length) return '';
+  const text = parts.join(' · ');
+
+  /*
+    실패는 있었는데 장애로 안 센 날. 숨기지 않고 왜 안 셌는지 같이 적는다 —
+    기록을 지우면 이 상태판을 못 믿는다.
+  */
+  const onlyUnmeasured = Object.keys(fails).every((k) => k === 'probe-404');
+  return confirmedFails(cell) === 0 && !onlyUnmeasured
+    ? text + ' (연속 실패 아님 — 장애로 세지 않음)'
+    : text;
 }
 
 /* 실패한 점검 비율을 하루(24h)에 대입한 근사치. 점검 간격이 일정하지 않아
    정확한 값이 아니므로 "약" 을 붙여 표시한다. */
 function downtimeText(cell) {
   if (!cell || !cell.total) return '';
-  const fail = cell.total - cell.ok;
+  const fail = confirmedFails(cell);
   if (fail <= 0) return '기록된 다운타임 없음';
   const mins = Math.round((fail / cell.total) * 1440);
   if (mins < 60) return `다운타임 약 ${mins}분`;

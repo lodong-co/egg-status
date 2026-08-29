@@ -124,7 +124,7 @@ try {
 
   // ── 판정이 목록 화면과 같은가 (grade 가 한 벌인지)
   const same = await b.evaluate(
-    "JSON.stringify([grade({ok:10,total:10,slow:0}),grade({ok:10,total:10,slow:5}),grade({ok:60,total:100}),grade(null)])",
+    "JSON.stringify([grade({ok:10,total:10,slow:0}),grade({ok:10,total:10,slow:5}),grade({ok:60,total:100,confirmed:40}),grade(null)])",
   );
   check('판정 함수가 목록 화면과 같다',
     String(same) === '[{"cls":"ok","label":"정상"},{"cls":"degraded","label":"응답 지연"},{"cls":"partial","label":"부분 장애"},{"cls":"nodata","label":"측정 없음"}]',

@@ -156,6 +156,7 @@ const components = results.map((r) => {
   const perDay = daily[r.id] || {};
   const cell = perDay[today] || { ok: 0, total: 0 };
   if (cell.slow === undefined) cell.slow = 0;
+  if (cell.confirmed === undefined) cell.confirmed = 0;
   if (!cell.fails) cell.fails = {};
 
   if (r.unmeasured) {
@@ -183,6 +184,19 @@ const components = results.map((r) => {
   const downSince = downStreak === 0 ? null
     : downStreak === 1 ? now.toISOString()
     : (before?.downSince || now.toISOString());
+
+  /*
+    장애로 인정한 점검 수. 한 번 실패하고 바로 돌아온 것은 세지 않는다 —
+    대개 점검하는 쪽의 순간적인 네트워크 문제다. 실제로 2026-08-27 새벽에
+    서로 다른 공인 IP 를 쓰는 셋이 동시에 한 번씩 실패했는데, 우리 감시에는
+    아무 기록이 없었다. 그 한 번이 하루를 「성능 저하」로 물들였다.
+
+    연속 두 번째에서 앞의 한 번까지 소급해 센다. 그 실패도 같은 장애의 일부다.
+    (자정을 걸쳐 시작된 장애는 앞의 한 번이 전날에 속한다. 하루 경계라 넘긴다.)
+  */
+  if (downStreak >= 2) {
+    cell.confirmed += downStreak === 2 ? 2 : 1;
+  }
 
   return {
     ...r,

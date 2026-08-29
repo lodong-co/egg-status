@@ -147,11 +147,12 @@
 const INCIDENT_DAYS = 15; // "지난 인시던트" 에서 날짜별로 훑을 일수. status.claude.com 과 동일.
 
 function uptimeText(perDay) {
+  /* 막대 색과 같은 기준으로 센다. 초록으로 칠해 놓고 %만 깎으면 앞뒤가 안 맞는다. */
   let ok = 0, total = 0;
   for (const key of dayKeys(DAYS)) {
     const c = perDay[key];
     if (!c || !c.total) continue;
-    ok += c.ok; total += c.total;
+    ok += c.total - confirmedFails(c); total += c.total;
   }
   if (!total) return '측정 데이터 없음';
   const pct = (ok / total) * 100;

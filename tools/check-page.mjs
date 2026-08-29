@@ -48,9 +48,13 @@ try {
   const g = async (cell) => b.evaluate('JSON.stringify(grade(' + JSON.stringify(cell) + '))');
   check('다 뜨고 빠르면 정상', JSON.parse(await g({ ok: 10, total: 10, slow: 0 })).cls === 'ok', await g({ ok: 10, total: 10, slow: 0 }));
   check('다 떴어도 느리면 노랑', JSON.parse(await g({ ok: 10, total: 10, slow: 5 })).label === '응답 지연', await g({ ok: 10, total: 10, slow: 5 }));
-  check('조금 실패하면 성능 저하', JSON.parse(await g({ ok: 99, total: 100 })).cls === 'degraded', await g({ ok: 99, total: 100 }));
-  check('절반 넘게 뜨면 부분 장애', JSON.parse(await g({ ok: 60, total: 100 })).cls === 'partial', await g({ ok: 60, total: 100 }));
-  check('대부분 실패면 전체 장애', JSON.parse(await g({ ok: 10, total: 100 })).cls === 'major', await g({ ok: 10, total: 100 }));
+  // confirmed = 장애로 인정한 점검 수. 연속 두 번부터 프로브가 센다.
+  // 이게 없으면(= 한 번 실패하고 바로 돌아옴) 그날은 정상이다.
+  const blip = { ok: 99, total: 100, confirmed: 0, fails: { timeout: 1 } };
+  check('한 번 실패는 정상', JSON.parse(await g(blip)).cls === 'ok', await g(blip));
+  check('조금 실패하면 성능 저하', JSON.parse(await g({ ok: 99, total: 100, confirmed: 1 })).cls === 'degraded', await g({ ok: 99, total: 100, confirmed: 1 }));
+  check('절반 넘게 뜨면 부분 장애', JSON.parse(await g({ ok: 60, total: 100, confirmed: 40 })).cls === 'partial', await g({ ok: 60, total: 100, confirmed: 40 }));
+  check('대부분 실패면 전체 장애', JSON.parse(await g({ ok: 10, total: 100, confirmed: 90 })).cls === 'major', await g({ ok: 10, total: 100, confirmed: 90 }));
   check('잰 적 없으면 측정 없음', JSON.parse(await g(null)).cls === 'nodata', await g(null));
 
   // ── 원인이 사람 말로 나오는가
