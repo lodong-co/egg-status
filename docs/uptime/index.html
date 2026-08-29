@@ -150,14 +150,16 @@ const firstDow = (y, m) => new Date(Date.UTC(y, m - 1, 1)).getUTCDay();
  * <p>잰 날만 센다. 측정 시작 전이나 빠진 날을 100%로 치면 실제보다 좋아 보인다.
  * 잰 날이 하나도 없으면 숫자를 만들지 않고 「측정 없음」이라고 쓴다.
  */
-function monthRate(perDay, y, m) {
+function monthRate(perDay, y, m, compId) {
+  /* 막대 색과 같은 기준으로 센다. 점검이 못 본 장애(인시던트)도 같이 깎는다 —
+     초록으로 칠해 놓고 %만 다르게 하면 앞뒤가 안 맞는다. */
   let ok = 0;
   let total = 0;
   let measured = 0;
   for (const { key } of daysOf(y, m)) {
     const c = perDay[key];
     if (!c || !c.total) continue;
-    ok += c.ok;
+    ok += c.total - badSamples(c, (INC_INDEX[compId] || {})[key] || []);
     total += c.total;
     measured += 1;
   }
@@ -179,7 +181,7 @@ function tipFor(compId, key, cell) {
   const fix = CORRECTIONS.find((c) => c.component === compId && c.day === key);
   return `<div class="t-date">${esc(longDate(key))}</div>
     <div class="t-state"><i class="${measured ? g.cls : ''}"></i>${esc(state)}</div>
-    ${measured && SHOW_UPTIME ? `<div class="t-sub">${esc(downtimeText(cell))}</div>` : ''}
+    ${measured && SHOW_UPTIME ? `<div class="t-sub">${esc(downtimeText(cell, incs))}</div>` : ''}
     ${cause ? `<div class="t-sub">${esc(cause)}</div>` : ''}
     ${slow ? `<div class="t-sub">느린 응답 ${slow}회</div>` : ''}
     ${fix ? `<div class="t-fix">보정됨 · ${esc(fix.reason)}</div>` : ''}`;
@@ -218,7 +220,7 @@ function render() {
   document.getElementById('panel').innerHTML = comps.map((c) => {
     const perDay = daily[c.id] || {};
     const cal = months.map(({ y, m }) => {
-      const rate = monthRate(perDay, y, m);
+      const rate = monthRate(perDay, y, m, c.id);
       const blanks = Array.from({ length: firstDow(y, m) }, () => '<div class="day blank"></div>').join('');
       const cells = daysOf(y, m).map(({ key, future }) => {
         if (future) return '<div class="day blank"></div>';

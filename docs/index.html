@@ -199,7 +199,7 @@ function tipHtml(compId, key, cell, startedAt) {
   const g = grade(cell, incs0);
   const measured = !!(cell && cell.total);
   const state = measured ? g.label : (startedAt && key < startedAt ? '측정 시작 전' : '측정 없음');
-  const sub = measured && SHOW_UPTIME ? downtimeText(cell)
+  const sub = measured && SHOW_UPTIME ? downtimeText(cell, incs0)
     : measured ? '' : '이 날짜는 아직 측정하지 않았습니다.';
 
   /* 왜 그랬는지. 등급만 보여주면 "그래서 뭐가 문제였는데" 에 답할 수 없다. */
