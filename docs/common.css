@@ -9,6 +9,9 @@
     --fg:#101828; --muted:#667085; --faint:#98a2b3;
     --accent:#0891b2;
     --ok:#12a150; --degraded:#d9a209; --partial:#e2680f; --major:#d92d20;
+    /* 서비스는 도는데 기능 하나가 안 되는 경우. 초록→노랑→주황→빨강 이 줄과
+       섞이면 「얼마나 나쁜가」로 읽힌다. 그 줄 밖의 색을 써서 종류가 다름을 보인다. */
+    --minor:#6d5ae6;
     --nodata:#e7eaee;
     --tip-bg:#1d2530; --tip-fg:#eef2f6; --tip-muted:#a7b2be; --tip-line:#333d4b;
   }
@@ -18,6 +21,7 @@
       --fg:#e6edf3; --muted:#93a0ae; --faint:#6b7885;
       --accent:#22d3ee;
       --ok:#2ea86a; --degraded:#c99a12; --partial:#d4711d; --major:#e05353;
+      --minor:#8b7bf0;
       --nodata:#232830;
       --tip-bg:#252b35; --tip-fg:#e6edf3; --tip-muted:#93a0ae; --tip-line:#39414d;
     }
