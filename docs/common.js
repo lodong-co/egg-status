@@ -214,3 +214,72 @@ function showTip(target, html) {
 const hideTip = () => tipEl.classList.remove('show');
 
 const noStore = { cache: 'no-store' };
+
+/*
+  「돌아가기」가 어디로 가야 하나.
+
+  referrer 는 남이 만들어 보낼 수 있는 값이다. 그대로 링크에 박으면 우리 화면이
+  아무 데나 보내 주는 발판이 된다. 그래서 <b>아는 주소일 때만</b> 그리로 보내고,
+  모르면 에그호스팅으로 보낸다.
+
+  처음 들어올 때의 온 곳을 기억해 둔다. 여기서 「가동률」로 한 번 더 들어가면
+  그때의 referrer 는 상태판 자기 자신이라, 기억해 두지 않으면 그 한 걸음 만에
+  돌아갈 곳을 잃는다.
+*/
+const BACK_HOME = { url: 'https://egghosting.com', name: '에그호스팅', particle: '으로' };
+
+const BACK_KNOWN = [
+  { host: 'eggooo.com', name: '에구 EGGOOO', particle: '로' },
+  { host: 'eggbox.egghosting.com', name: '에구 EGGOOO', particle: '로' },
+  { host: 'egghosting.com', name: '에그호스팅', particle: '으로' },
+  { host: 'xn--2i0b150btjcqzt7xd.com', name: '에그호스팅', particle: '으로' },
+  { host: 'eggdomains.com', name: '에그도메인', particle: '으로' },
+  { host: 'partner.egghosting.com', name: '파트너 센터', particle: '로' },
+  { host: 'sajuj.com', name: '사주J', particle: '로' },
+  { host: 'ldpass.com', name: 'LD PASS', particle: '로' },
+];
+
+function bareHost(h) {
+  const s = String(h).toLowerCase();
+  return s.startsWith('www.') ? s.slice(4) : s;
+}
+
+const BACK_KEY = 'egg-status-from';
+
+function backTarget() {
+  let saved = null;
+  try { saved = JSON.parse(sessionStorage.getItem(BACK_KEY) || 'null'); } catch (e) { saved = null; }
+
+  let ref = null;
+  try { ref = document.referrer ? new URL(document.referrer) : null; } catch (e) { ref = null; }
+
+  if (ref && ref.protocol === 'https:') {
+    const host = bareHost(ref.hostname);
+    const hit = BACK_KNOWN.find((k) => k.host === host);
+    if (hit) {
+      const t = { url: ref.href, name: hit.name, particle: hit.particle };
+      try { sessionStorage.setItem(BACK_KEY, JSON.stringify(t)); } catch (e) { /* 시크릿 모드 */ }
+      return t;
+    }
+  }
+
+  /* 기억해 둔 것도 한 번 더 검사한다. sessionStorage 는 고쳐 넣을 수 있다. */
+  if (saved && saved.url) {
+    try {
+      const u = new URL(saved.url);
+      const host = bareHost(u.hostname);
+      if (u.protocol === 'https:' && BACK_KNOWN.some((k) => k.host === host)) return saved;
+    } catch (e) { /* 못 읽으면 버린다 */ }
+  }
+
+  return BACK_HOME;
+}
+
+(function drawBack() {
+  const el = document.getElementById('back');
+  const txt = document.getElementById('backText');
+  if (!el || !txt) return;
+  const t = backTarget();
+  el.href = t.url;
+  txt.textContent = t.name + t.particle + ' 돌아가기';
+})();

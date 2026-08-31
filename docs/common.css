@@ -36,6 +36,20 @@
   }
   .wrap{max-width:860px;margin:0 auto;padding:48px 20px 72px}
 
+  /*
+    이 상태판을 떠나 온 곳으로 돌아가는 줄. 헤더 위에 한 줄로 둔다.
+
+    상자를 씌우지 않는다 — 아래가 전부 카드라 버튼까지 카드로 만들면
+    화면이 상자 더미가 된다. 화살표와 이름만으로 눌러야 할 것으로 읽힌다.
+
+    아래쪽 .back(가동률 화면의 「← 현재 상태」)과 이름이 다르다.
+    그건 상태판 안에서 움직이는 링크고 이건 밖으로 나가는 링크다.
+  */
+  .back-site{display:inline-flex;align-items:baseline;gap:5px;margin-bottom:18px;
+    font-size:12.5px;color:var(--muted);text-decoration:none}
+  .back-site:hover{color:var(--fg)}
+  .back-site .arrow{font-size:13.5px;line-height:1}
+
   /* 헤더 · 구독 */
   header{display:flex;align-items:center;justify-content:space-between;gap:16px;
     flex-wrap:wrap;margin-bottom:30px}

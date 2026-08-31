@@ -84,6 +84,18 @@
 </head>
 <body>
 <div class="wrap">
+  <!--
+    상태판은 대개 다른 사이트에서 넘어와 보는 화면이다. 에구 푸터의 「상태」를
+    누르면 여기로 오는데, 돌아갈 길이 없어서 브라우저 뒤로가기를 아는 사람만
+    돌아갔다. 온 곳을 여기에 적어 준다.
+
+    기본값은 에그호스팅이다. 자바스크립트가 안 돌아도 아무 데도 못 가는
+    화면은 되지 않는다.
+  -->
+  <a class="back-site" id="back" href="https://egghosting.com" title="돌아가기">
+    <span class="arrow" aria-hidden="true">←</span><span id="backText">에그호스팅으로 돌아가기</span>
+  </a>
+
   <header>
     <div class="brand">
       <a href="https://egghosting.com" title="에그호스팅">
