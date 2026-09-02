@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "startedAt": "2026-08-19",
-  "updatedAt": "2026-09-02T05:08:58.093Z",
+  "updatedAt": "2026-09-02T05:19:58.637Z",
   "components": [
     {
       "id": "console",
@@ -9,7 +9,7 @@
       "desc": "대시보드 · API",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 861,
+      "latencyMs": 815,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -26,7 +26,7 @@
       "desc": "웹호스팅 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 701,
+      "latencyMs": 865,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -43,7 +43,7 @@
       "desc": "클라우드 VM 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 1366,
+      "latencyMs": 1233,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -60,7 +60,7 @@
       "desc": "도메인 등록 · DNS",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 1142,
+      "latencyMs": 923,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -77,7 +77,7 @@
       "desc": "LD PASS · 소셜 · 아이디",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 1234,
+      "latencyMs": 1017,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -186,8 +186,8 @@
         "fails": {}
       },
       "2026-09-02": {
-        "ok": 238,
-        "total": 238,
+        "ok": 249,
+        "total": 249,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -279,8 +279,8 @@
         "fails": {}
       },
       "2026-09-02": {
-        "ok": 238,
-        "total": 238,
+        "ok": 249,
+        "total": 249,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -372,8 +372,8 @@
         "fails": {}
       },
       "2026-09-02": {
-        "ok": 238,
-        "total": 238,
+        "ok": 249,
+        "total": 249,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -467,8 +467,8 @@
         "fails": {}
       },
       "2026-09-02": {
-        "ok": 238,
-        "total": 238,
+        "ok": 249,
+        "total": 249,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -562,8 +562,8 @@
         "fails": {}
       },
       "2026-09-02": {
-        "ok": 238,
-        "total": 238,
+        "ok": 249,
+        "total": 249,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
