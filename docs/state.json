@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "startedAt": "2026-08-19",
-  "updatedAt": "2026-09-15T00:37:41.322Z",
+  "updatedAt": "2026-09-15T00:40:41.442Z",
   "components": [
     {
       "id": "console",
@@ -9,7 +9,7 @@
       "desc": "대시보드 · API",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 937,
+      "latencyMs": 978,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -26,7 +26,7 @@
       "desc": "웹호스팅 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 1957,
+      "latencyMs": 941,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -43,7 +43,7 @@
       "desc": "클라우드 VM 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 2197,
+      "latencyMs": 1339,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -60,7 +60,7 @@
       "desc": "도메인 등록 · DNS",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 2219,
+      "latencyMs": 1361,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -75,18 +75,18 @@
       "id": "login",
       "name": "로그인",
       "desc": "LD PASS · 소셜 · 아이디",
-      "up": true,
-      "statusCode": 200,
-      "latencyMs": 2298,
+      "up": false,
+      "statusCode": 502,
+      "latencyMs": 1358,
       "slow": false,
       "unmeasured": false,
-      "reason": null,
-      "error": null,
-      "downStreak": 0,
-      "downSince": null,
+      "reason": "http-502",
+      "error": "http 502",
+      "downStreak": 1,
+      "downSince": "2026-09-15T00:40:41.442Z",
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
-      "changedAt": "2026-08-26T20:40:08.267Z"
+      "changedAt": "2026-09-15T00:40:41.442Z"
     }
   ],
   "daily": {
@@ -277,8 +277,8 @@
         "fails": {}
       },
       "2026-09-15": {
-        "ok": 103,
-        "total": 103,
+        "ok": 106,
+        "total": 106,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -461,8 +461,8 @@
         "fails": {}
       },
       "2026-09-15": {
-        "ok": 103,
-        "total": 103,
+        "ok": 106,
+        "total": 106,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -645,8 +645,8 @@
         "fails": {}
       },
       "2026-09-15": {
-        "ok": 103,
-        "total": 103,
+        "ok": 106,
+        "total": 106,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -831,8 +831,8 @@
         "fails": {}
       },
       "2026-09-15": {
-        "ok": 103,
-        "total": 103,
+        "ok": 106,
+        "total": 106,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -1017,11 +1017,13 @@
         "fails": {}
       },
       "2026-09-15": {
-        "ok": 103,
-        "total": 103,
+        "ok": 105,
+        "total": 106,
         "slow": 0,
         "confirmed": 0,
-        "fails": {}
+        "fails": {
+          "http-502": 1
+        }
       }
     }
   },
