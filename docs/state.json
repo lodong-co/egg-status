@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "startedAt": "2026-08-19",
-  "updatedAt": "2026-09-16T14:55:25.520Z",
+  "updatedAt": "2026-09-16T15:06:25.964Z",
   "components": [
     {
       "id": "console",
@@ -9,7 +9,7 @@
       "desc": "대시보드 · API",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 934,
+      "latencyMs": 672,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -26,7 +26,7 @@
       "desc": "웹호스팅 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 2164,
+      "latencyMs": 1071,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -43,7 +43,7 @@
       "desc": "클라우드 VM 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 1815,
+      "latencyMs": 1151,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -60,7 +60,7 @@
       "desc": "도메인 등록 · DNS",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 1979,
+      "latencyMs": 1316,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -77,7 +77,7 @@
       "desc": "LD PASS · 소셜 · 아이디",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 2160,
+      "latencyMs": 944,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -284,8 +284,15 @@
         "fails": {}
       },
       "2026-09-16": {
-        "ok": 318,
-        "total": 318,
+        "ok": 322,
+        "total": 322,
+        "slow": 0,
+        "confirmed": 0,
+        "fails": {}
+      },
+      "2026-09-17": {
+        "ok": 7,
+        "total": 7,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -475,8 +482,15 @@
         "fails": {}
       },
       "2026-09-16": {
-        "ok": 318,
-        "total": 318,
+        "ok": 322,
+        "total": 322,
+        "slow": 0,
+        "confirmed": 0,
+        "fails": {}
+      },
+      "2026-09-17": {
+        "ok": 7,
+        "total": 7,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -666,9 +680,16 @@
         "fails": {}
       },
       "2026-09-16": {
-        "ok": 318,
-        "total": 318,
+        "ok": 322,
+        "total": 322,
         "slow": 1,
+        "confirmed": 0,
+        "fails": {}
+      },
+      "2026-09-17": {
+        "ok": 7,
+        "total": 7,
+        "slow": 0,
         "confirmed": 0,
         "fails": {}
       }
@@ -859,13 +880,20 @@
         "fails": {}
       },
       "2026-09-16": {
-        "ok": 317,
-        "total": 318,
+        "ok": 321,
+        "total": 322,
         "slow": 0,
         "confirmed": 0,
         "fails": {
           "network": 1
         }
+      },
+      "2026-09-17": {
+        "ok": 7,
+        "total": 7,
+        "slow": 0,
+        "confirmed": 0,
+        "fails": {}
       }
     },
     "login": {
@@ -1056,13 +1084,20 @@
         }
       },
       "2026-09-16": {
-        "ok": 317,
-        "total": 318,
+        "ok": 321,
+        "total": 322,
         "slow": 0,
         "confirmed": 0,
         "fails": {
           "network": 1
         }
+      },
+      "2026-09-17": {
+        "ok": 7,
+        "total": 7,
+        "slow": 0,
+        "confirmed": 0,
+        "fails": {}
       }
     }
   },
