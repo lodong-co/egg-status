@@ -1,24 +1,24 @@
 {
   "schema": 1,
   "startedAt": "2026-08-19",
-  "updatedAt": "2026-09-17T19:04:02.131Z",
+  "updatedAt": "2026-09-17T19:05:02.152Z",
   "components": [
     {
       "id": "console",
       "name": "관리 콘솔",
       "desc": "대시보드 · API",
-      "up": true,
-      "statusCode": 200,
-      "latencyMs": 579,
+      "up": false,
+      "statusCode": null,
+      "latencyMs": 10002,
       "slow": false,
       "unmeasured": false,
-      "reason": null,
-      "error": null,
-      "downStreak": 0,
-      "downSince": null,
+      "reason": "timeout",
+      "error": "timeout",
+      "downStreak": 1,
+      "downSince": "2026-09-17T19:05:02.152Z",
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
-      "changedAt": "2026-08-26T20:40:08.267Z"
+      "changedAt": "2026-09-17T19:05:02.152Z"
     },
     {
       "id": "web",
@@ -26,7 +26,7 @@
       "desc": "웹호스팅 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 936,
+      "latencyMs": 1717,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -43,7 +43,7 @@
       "desc": "클라우드 VM 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 709,
+      "latencyMs": 1896,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -60,12 +60,12 @@
       "desc": "도메인 등록 · DNS",
       "up": false,
       "statusCode": null,
-      "latencyMs": 10001,
+      "latencyMs": 10000,
       "slow": false,
       "unmeasured": false,
       "reason": "timeout",
       "error": "timeout",
-      "downStreak": 1,
+      "downStreak": 2,
       "downSince": "2026-09-17T19:04:02.131Z",
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
@@ -77,12 +77,12 @@
       "desc": "LD PASS · 소셜 · 아이디",
       "up": false,
       "statusCode": null,
-      "latencyMs": 10000,
+      "latencyMs": 10001,
       "slow": false,
       "unmeasured": false,
       "reason": "timeout",
       "error": "timeout",
-      "downStreak": 1,
+      "downStreak": 2,
       "downSince": "2026-09-17T19:04:02.131Z",
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
@@ -299,10 +299,12 @@
       },
       "2026-09-18": {
         "ok": 53,
-        "total": 53,
+        "total": 54,
         "slow": 0,
         "confirmed": 0,
-        "fails": {}
+        "fails": {
+          "timeout": 1
+        }
       }
     },
     "web": {
@@ -503,8 +505,8 @@
         "fails": {}
       },
       "2026-09-18": {
-        "ok": 53,
-        "total": 53,
+        "ok": 54,
+        "total": 54,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -708,8 +710,8 @@
         "fails": {}
       },
       "2026-09-18": {
-        "ok": 53,
-        "total": 53,
+        "ok": 54,
+        "total": 54,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -918,11 +920,11 @@
       },
       "2026-09-18": {
         "ok": 52,
-        "total": 53,
+        "total": 54,
         "slow": 0,
-        "confirmed": 0,
+        "confirmed": 2,
         "fails": {
-          "timeout": 1
+          "timeout": 2
         }
       }
     },
@@ -1131,11 +1133,11 @@
       },
       "2026-09-18": {
         "ok": 52,
-        "total": 53,
+        "total": 54,
         "slow": 0,
-        "confirmed": 0,
+        "confirmed": 2,
         "fails": {
-          "timeout": 1
+          "timeout": 2
         }
       }
     }
