@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "startedAt": "2026-08-19",
-  "updatedAt": "2026-09-17T19:16:02.499Z",
+  "updatedAt": "2026-09-17T19:19:02.602Z",
   "components": [
     {
       "id": "console",
@@ -9,12 +9,12 @@
       "desc": "대시보드 · API",
       "up": false,
       "statusCode": null,
-      "latencyMs": 10001,
+      "latencyMs": 10002,
       "slow": false,
       "unmeasured": false,
       "reason": "timeout",
       "error": "timeout",
-      "downStreak": 12,
+      "downStreak": 15,
       "downSince": "2026-09-17T19:05:02.152Z",
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
@@ -26,7 +26,7 @@
       "desc": "웹호스팅 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 951,
+      "latencyMs": 888,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -43,7 +43,7 @@
       "desc": "클라우드 VM 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 1242,
+      "latencyMs": 1239,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -65,7 +65,7 @@
       "unmeasured": false,
       "reason": "timeout",
       "error": "timeout",
-      "downStreak": 13,
+      "downStreak": 16,
       "downSince": "2026-09-17T19:04:02.131Z",
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
@@ -77,12 +77,12 @@
       "desc": "LD PASS · 소셜 · 아이디",
       "up": false,
       "statusCode": null,
-      "latencyMs": 10000,
+      "latencyMs": 10001,
       "slow": false,
       "unmeasured": false,
       "reason": "timeout",
       "error": "timeout",
-      "downStreak": 13,
+      "downStreak": 16,
       "downSince": "2026-09-17T19:04:02.131Z",
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
@@ -299,11 +299,11 @@
       },
       "2026-09-18": {
         "ok": 53,
-        "total": 65,
+        "total": 68,
         "slow": 0,
-        "confirmed": 12,
+        "confirmed": 15,
         "fails": {
-          "timeout": 12
+          "timeout": 15
         }
       }
     },
@@ -505,8 +505,8 @@
         "fails": {}
       },
       "2026-09-18": {
-        "ok": 65,
-        "total": 65,
+        "ok": 68,
+        "total": 68,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -710,8 +710,8 @@
         "fails": {}
       },
       "2026-09-18": {
-        "ok": 65,
-        "total": 65,
+        "ok": 68,
+        "total": 68,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -920,11 +920,11 @@
       },
       "2026-09-18": {
         "ok": 52,
-        "total": 65,
+        "total": 68,
         "slow": 0,
-        "confirmed": 13,
+        "confirmed": 16,
         "fails": {
-          "timeout": 13
+          "timeout": 16
         }
       }
     },
@@ -1133,11 +1133,11 @@
       },
       "2026-09-18": {
         "ok": 52,
-        "total": 65,
+        "total": 68,
         "slow": 0,
-        "confirmed": 13,
+        "confirmed": 16,
         "fails": {
-          "timeout": 13
+          "timeout": 16
         }
       }
     }
