@@ -1,92 +1,92 @@
 {
   "schema": 1,
   "startedAt": "2026-08-19",
-  "updatedAt": "2026-09-18T12:24:51.810Z",
+  "updatedAt": "2026-09-18T12:25:51.825Z",
   "components": [
     {
       "id": "console",
       "name": "관리 콘솔",
       "desc": "대시보드 · API",
-      "up": false,
-      "statusCode": null,
-      "latencyMs": 10002,
+      "up": true,
+      "statusCode": 200,
+      "latencyMs": 701,
       "slow": false,
       "unmeasured": false,
-      "reason": "timeout",
-      "error": "timeout",
-      "downStreak": 1,
-      "downSince": "2026-09-18T12:24:51.810Z",
+      "reason": null,
+      "error": null,
+      "downStreak": 0,
+      "downSince": null,
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
-      "changedAt": "2026-09-18T12:24:51.810Z"
+      "changedAt": "2026-09-18T12:25:51.825Z"
     },
     {
       "id": "web",
       "name": "웹호스팅",
       "desc": "웹호스팅 플랫폼",
-      "up": false,
-      "statusCode": null,
-      "latencyMs": 10001,
+      "up": true,
+      "statusCode": 200,
+      "latencyMs": 556,
       "slow": false,
       "unmeasured": false,
-      "reason": "timeout",
-      "error": "timeout",
-      "downStreak": 1,
-      "downSince": "2026-09-18T12:24:51.810Z",
+      "reason": null,
+      "error": null,
+      "downStreak": 0,
+      "downSince": null,
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
-      "changedAt": "2026-09-18T12:24:51.810Z"
+      "changedAt": "2026-09-18T12:25:51.825Z"
     },
     {
       "id": "cloud",
       "name": "클라우드 서버",
       "desc": "클라우드 VM 플랫폼",
-      "up": false,
-      "statusCode": null,
-      "latencyMs": 10001,
+      "up": true,
+      "statusCode": 200,
+      "latencyMs": 1099,
       "slow": false,
       "unmeasured": false,
-      "reason": "timeout",
-      "error": "timeout",
-      "downStreak": 1,
-      "downSince": "2026-09-18T12:24:51.810Z",
+      "reason": null,
+      "error": null,
+      "downStreak": 0,
+      "downSince": null,
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
-      "changedAt": "2026-09-18T12:24:51.810Z"
+      "changedAt": "2026-09-18T12:25:51.825Z"
     },
     {
       "id": "domain",
       "name": "도메인",
       "desc": "도메인 등록 · DNS",
-      "up": false,
-      "statusCode": null,
-      "latencyMs": 10000,
+      "up": true,
+      "statusCode": 200,
+      "latencyMs": 1088,
       "slow": false,
       "unmeasured": false,
-      "reason": "timeout",
-      "error": "timeout",
-      "downStreak": 1,
-      "downSince": "2026-09-18T12:24:51.810Z",
+      "reason": null,
+      "error": null,
+      "downStreak": 0,
+      "downSince": null,
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
-      "changedAt": "2026-09-18T12:24:51.810Z"
+      "changedAt": "2026-09-18T12:25:51.825Z"
     },
     {
       "id": "login",
       "name": "로그인",
       "desc": "LD PASS · 소셜 · 아이디",
-      "up": false,
-      "statusCode": null,
-      "latencyMs": 10000,
+      "up": true,
+      "statusCode": 200,
+      "latencyMs": 1207,
       "slow": false,
       "unmeasured": false,
-      "reason": "timeout",
-      "error": "timeout",
-      "downStreak": 1,
-      "downSince": "2026-09-18T12:24:51.810Z",
+      "reason": null,
+      "error": null,
+      "downStreak": 0,
+      "downSince": null,
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
-      "changedAt": "2026-09-18T12:24:51.810Z"
+      "changedAt": "2026-09-18T12:25:51.825Z"
     }
   ],
   "daily": {
@@ -298,8 +298,8 @@
         "fails": {}
       },
       "2026-09-18": {
-        "ok": 290,
-        "total": 306,
+        "ok": 291,
+        "total": 307,
         "slow": 0,
         "confirmed": 15,
         "fails": {
@@ -505,8 +505,8 @@
         "fails": {}
       },
       "2026-09-18": {
-        "ok": 305,
-        "total": 306,
+        "ok": 306,
+        "total": 307,
         "slow": 0,
         "confirmed": 0,
         "fails": {
@@ -712,8 +712,8 @@
         "fails": {}
       },
       "2026-09-18": {
-        "ok": 305,
-        "total": 306,
+        "ok": 306,
+        "total": 307,
         "slow": 0,
         "confirmed": 0,
         "fails": {
@@ -923,8 +923,8 @@
         "fails": {}
       },
       "2026-09-18": {
-        "ok": 289,
-        "total": 306,
+        "ok": 290,
+        "total": 307,
         "slow": 1,
         "confirmed": 16,
         "fails": {
@@ -1136,8 +1136,8 @@
         "fails": {}
       },
       "2026-09-18": {
-        "ok": 289,
-        "total": 306,
+        "ok": 290,
+        "total": 307,
         "slow": 1,
         "confirmed": 16,
         "fails": {
