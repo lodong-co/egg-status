@@ -1,92 +1,92 @@
 {
   "schema": 1,
   "startedAt": "2026-08-19",
-  "updatedAt": "2026-09-18T12:13:51.469Z",
+  "updatedAt": "2026-09-18T12:24:51.810Z",
   "components": [
     {
       "id": "console",
       "name": "관리 콘솔",
       "desc": "대시보드 · API",
-      "up": true,
-      "statusCode": 200,
-      "latencyMs": 711,
+      "up": false,
+      "statusCode": null,
+      "latencyMs": 10002,
       "slow": false,
       "unmeasured": false,
-      "reason": null,
-      "error": null,
-      "downStreak": 0,
-      "downSince": null,
+      "reason": "timeout",
+      "error": "timeout",
+      "downStreak": 1,
+      "downSince": "2026-09-18T12:24:51.810Z",
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
-      "changedAt": "2026-09-17T21:40:59.409Z"
+      "changedAt": "2026-09-18T12:24:51.810Z"
     },
     {
       "id": "web",
       "name": "웹호스팅",
       "desc": "웹호스팅 플랫폼",
-      "up": true,
-      "statusCode": 200,
-      "latencyMs": 582,
+      "up": false,
+      "statusCode": null,
+      "latencyMs": 10001,
       "slow": false,
       "unmeasured": false,
-      "reason": null,
-      "error": null,
-      "downStreak": 0,
-      "downSince": null,
+      "reason": "timeout",
+      "error": "timeout",
+      "downStreak": 1,
+      "downSince": "2026-09-18T12:24:51.810Z",
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
-      "changedAt": "2026-08-19T13:22:34.828Z"
+      "changedAt": "2026-09-18T12:24:51.810Z"
     },
     {
       "id": "cloud",
       "name": "클라우드 서버",
       "desc": "클라우드 VM 플랫폼",
-      "up": true,
-      "statusCode": 200,
-      "latencyMs": 1530,
+      "up": false,
+      "statusCode": null,
+      "latencyMs": 10001,
       "slow": false,
       "unmeasured": false,
-      "reason": null,
-      "error": null,
-      "downStreak": 0,
-      "downSince": null,
+      "reason": "timeout",
+      "error": "timeout",
+      "downStreak": 1,
+      "downSince": "2026-09-18T12:24:51.810Z",
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
-      "changedAt": "2026-08-19T13:22:34.828Z"
+      "changedAt": "2026-09-18T12:24:51.810Z"
     },
     {
       "id": "domain",
       "name": "도메인",
       "desc": "도메인 등록 · DNS",
-      "up": true,
-      "statusCode": 200,
-      "latencyMs": 911,
+      "up": false,
+      "statusCode": null,
+      "latencyMs": 10000,
       "slow": false,
       "unmeasured": false,
-      "reason": null,
-      "error": null,
-      "downStreak": 0,
-      "downSince": null,
+      "reason": "timeout",
+      "error": "timeout",
+      "downStreak": 1,
+      "downSince": "2026-09-18T12:24:51.810Z",
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
-      "changedAt": "2026-09-17T21:40:59.409Z"
+      "changedAt": "2026-09-18T12:24:51.810Z"
     },
     {
       "id": "login",
       "name": "로그인",
       "desc": "LD PASS · 소셜 · 아이디",
-      "up": true,
-      "statusCode": 200,
-      "latencyMs": 995,
+      "up": false,
+      "statusCode": null,
+      "latencyMs": 10000,
       "slow": false,
       "unmeasured": false,
-      "reason": null,
-      "error": null,
-      "downStreak": 0,
-      "downSince": null,
+      "reason": "timeout",
+      "error": "timeout",
+      "downStreak": 1,
+      "downSince": "2026-09-18T12:24:51.810Z",
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
-      "changedAt": "2026-09-17T21:40:59.409Z"
+      "changedAt": "2026-09-18T12:24:51.810Z"
     }
   ],
   "daily": {
@@ -298,12 +298,12 @@
         "fails": {}
       },
       "2026-09-18": {
-        "ok": 280,
-        "total": 295,
+        "ok": 290,
+        "total": 306,
         "slow": 0,
         "confirmed": 15,
         "fails": {
-          "timeout": 15
+          "timeout": 16
         }
       }
     },
@@ -505,11 +505,13 @@
         "fails": {}
       },
       "2026-09-18": {
-        "ok": 295,
-        "total": 295,
+        "ok": 305,
+        "total": 306,
         "slow": 0,
         "confirmed": 0,
-        "fails": {}
+        "fails": {
+          "timeout": 1
+        }
       }
     },
     "cloud": {
@@ -710,11 +712,13 @@
         "fails": {}
       },
       "2026-09-18": {
-        "ok": 295,
-        "total": 295,
+        "ok": 305,
+        "total": 306,
         "slow": 0,
         "confirmed": 0,
-        "fails": {}
+        "fails": {
+          "timeout": 1
+        }
       }
     },
     "domain": {
@@ -919,12 +923,12 @@
         "fails": {}
       },
       "2026-09-18": {
-        "ok": 279,
-        "total": 295,
+        "ok": 289,
+        "total": 306,
         "slow": 1,
         "confirmed": 16,
         "fails": {
-          "timeout": 16
+          "timeout": 17
         }
       }
     },
@@ -1132,12 +1136,12 @@
         "fails": {}
       },
       "2026-09-18": {
-        "ok": 279,
-        "total": 295,
+        "ok": 289,
+        "total": 306,
         "slow": 1,
         "confirmed": 16,
         "fails": {
-          "timeout": 16
+          "timeout": 17
         }
       }
     }
