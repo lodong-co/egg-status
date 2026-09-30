@@ -6,6 +6,20 @@
     <description>에그호스팅의 서비스 인시던트 공지</description>
     <language>ko</language>
     <item>
+      <title>도메인 응답 없음</title>
+      <link>https://status.egghosting.com</link>
+      <guid isPermaLink="false">https://status.egghosting.com/#auto-domain-2026-09-30T07:27:37.562Z</guid>
+      <pubDate>Wed, 30 Sep 2026 07:57:38 GMT</pubDate>
+      <description>investigating: 도메인이 30분째 응답하지 않고 있습니다. 확인된 증상은 응답 시간 초과입니다. 에그호스팅 밖에서 하는 자동 점검에서 감지했습니다.</description>
+    </item>
+    <item>
+      <title>로그인 응답 없음</title>
+      <link>https://status.egghosting.com</link>
+      <guid isPermaLink="false">https://status.egghosting.com/#auto-login-2026-09-30T07:27:37.562Z</guid>
+      <pubDate>Wed, 30 Sep 2026 07:57:38 GMT</pubDate>
+      <description>investigating: 로그인이 30분째 응답하지 않고 있습니다. 확인된 증상은 응답 시간 초과입니다. 에그호스팅 밖에서 하는 자동 점검에서 감지했습니다.</description>
+    </item>
+    <item>
       <title>카카오 로그인 일시 중단</title>
       <link>https://status.egghosting.com</link>
       <guid isPermaLink="false">https://status.egghosting.com/#2026-08-29-kakao-login</guid>
