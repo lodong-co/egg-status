@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "startedAt": "2026-08-19",
-  "updatedAt": "2026-10-13T11:55:13.583Z",
+  "updatedAt": "2026-10-13T12:06:14.089Z",
   "components": [
     {
       "id": "console",
@@ -9,7 +9,7 @@
       "desc": "대시보드 · API",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 870,
+      "latencyMs": 842,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -26,8 +26,8 @@
       "desc": "웹호스팅 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 4020,
-      "slow": true,
+      "latencyMs": 844,
+      "slow": false,
       "unmeasured": false,
       "reason": null,
       "error": null,
@@ -43,7 +43,7 @@
       "desc": "클라우드 VM 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 3275,
+      "latencyMs": 1208,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -60,7 +60,7 @@
       "desc": "도메인 등록 · DNS",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 3550,
+      "latencyMs": 947,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -77,7 +77,7 @@
       "desc": "LD PASS · 소셜 · 아이디",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 3625,
+      "latencyMs": 977,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -475,8 +475,8 @@
         "fails": {}
       },
       "2026-10-13": {
-        "ok": 175,
-        "total": 175,
+        "ok": 186,
+        "total": 186,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -857,8 +857,8 @@
         "fails": {}
       },
       "2026-10-13": {
-        "ok": 175,
-        "total": 175,
+        "ok": 186,
+        "total": 186,
         "slow": 1,
         "confirmed": 0,
         "fails": {}
@@ -1239,8 +1239,8 @@
         "fails": {}
       },
       "2026-10-13": {
-        "ok": 175,
-        "total": 175,
+        "ok": 186,
+        "total": 186,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -1629,8 +1629,8 @@
         "fails": {}
       },
       "2026-10-13": {
-        "ok": 175,
-        "total": 175,
+        "ok": 186,
+        "total": 186,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -2021,8 +2021,8 @@
         "fails": {}
       },
       "2026-10-13": {
-        "ok": 175,
-        "total": 175,
+        "ok": 186,
+        "total": 186,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
