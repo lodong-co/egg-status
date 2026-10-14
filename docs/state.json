@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "startedAt": "2026-08-19",
-  "updatedAt": "2026-10-14T02:33:44.962Z",
+  "updatedAt": "2026-10-14T02:42:45.312Z",
   "components": [
     {
       "id": "console",
@@ -9,7 +9,7 @@
       "desc": "대시보드 · API",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 608,
+      "latencyMs": 621,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -26,7 +26,7 @@
       "desc": "웹호스팅 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 676,
+      "latencyMs": 656,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -60,12 +60,12 @@
       "desc": "도메인 등록 · DNS",
       "up": false,
       "statusCode": null,
-      "latencyMs": 10002,
+      "latencyMs": 10000,
       "slow": false,
       "unmeasured": false,
       "reason": "timeout",
       "error": "timeout",
-      "downStreak": 42,
+      "downStreak": 51,
       "downSince": "2026-10-14T01:52:43.521Z",
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
@@ -82,7 +82,7 @@
       "unmeasured": false,
       "reason": "timeout",
       "error": "timeout",
-      "downStreak": 42,
+      "downStreak": 51,
       "downSince": "2026-10-14T01:52:43.521Z",
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
@@ -482,8 +482,8 @@
         "fails": {}
       },
       "2026-10-14": {
-        "ok": 144,
-        "total": 144,
+        "ok": 153,
+        "total": 153,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -871,8 +871,8 @@
         "fails": {}
       },
       "2026-10-14": {
-        "ok": 144,
-        "total": 144,
+        "ok": 153,
+        "total": 153,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -1260,8 +1260,8 @@
         "fails": {}
       },
       "2026-10-14": {
-        "ok": 144,
-        "total": 144,
+        "ok": 153,
+        "total": 153,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -1658,11 +1658,11 @@
       },
       "2026-10-14": {
         "ok": 102,
-        "total": 144,
+        "total": 153,
         "slow": 0,
-        "confirmed": 42,
+        "confirmed": 51,
         "fails": {
-          "timeout": 42
+          "timeout": 51
         }
       }
     },
@@ -2059,11 +2059,11 @@
       },
       "2026-10-14": {
         "ok": 102,
-        "total": 144,
+        "total": 153,
         "slow": 0,
-        "confirmed": 42,
+        "confirmed": 51,
         "fails": {
-          "timeout": 42
+          "timeout": 51
         }
       }
     }
