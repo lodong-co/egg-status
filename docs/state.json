@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "startedAt": "2026-08-19",
-  "updatedAt": "2026-10-14T02:42:45.312Z",
+  "updatedAt": "2026-10-14T05:57:01.068Z",
   "components": [
     {
       "id": "console",
@@ -9,7 +9,7 @@
       "desc": "대시보드 · API",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 621,
+      "latencyMs": 842,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -26,7 +26,7 @@
       "desc": "웹호스팅 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 656,
+      "latencyMs": 912,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -43,7 +43,7 @@
       "desc": "클라우드 VM 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 932,
+      "latencyMs": 1270,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -58,35 +58,35 @@
       "id": "domain",
       "name": "도메인",
       "desc": "도메인 등록 · DNS",
-      "up": false,
-      "statusCode": null,
-      "latencyMs": 10000,
+      "up": true,
+      "statusCode": 200,
+      "latencyMs": 1128,
       "slow": false,
       "unmeasured": false,
-      "reason": "timeout",
-      "error": "timeout",
-      "downStreak": 51,
-      "downSince": "2026-10-14T01:52:43.521Z",
+      "reason": null,
+      "error": null,
+      "downStreak": 0,
+      "downSince": null,
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
-      "changedAt": "2026-10-14T01:52:43.521Z"
+      "changedAt": "2026-10-14T05:57:01.068Z"
     },
     {
       "id": "login",
       "name": "로그인",
       "desc": "LD PASS · 소셜 · 아이디",
-      "up": false,
-      "statusCode": null,
-      "latencyMs": 10001,
+      "up": true,
+      "statusCode": 200,
+      "latencyMs": 1308,
       "slow": false,
       "unmeasured": false,
-      "reason": "timeout",
-      "error": "timeout",
-      "downStreak": 51,
-      "downSince": "2026-10-14T01:52:43.521Z",
+      "reason": null,
+      "error": null,
+      "downStreak": 0,
+      "downSince": null,
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
-      "changedAt": "2026-10-14T01:52:43.521Z"
+      "changedAt": "2026-10-14T05:57:01.068Z"
     }
   ],
   "daily": {
@@ -482,8 +482,8 @@
         "fails": {}
       },
       "2026-10-14": {
-        "ok": 153,
-        "total": 153,
+        "ok": 154,
+        "total": 154,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -871,8 +871,8 @@
         "fails": {}
       },
       "2026-10-14": {
-        "ok": 153,
-        "total": 153,
+        "ok": 154,
+        "total": 154,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -1260,8 +1260,8 @@
         "fails": {}
       },
       "2026-10-14": {
-        "ok": 153,
-        "total": 153,
+        "ok": 154,
+        "total": 154,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -1657,8 +1657,8 @@
         "fails": {}
       },
       "2026-10-14": {
-        "ok": 102,
-        "total": 153,
+        "ok": 103,
+        "total": 154,
         "slow": 0,
         "confirmed": 51,
         "fails": {
@@ -2058,8 +2058,8 @@
         "fails": {}
       },
       "2026-10-14": {
-        "ok": 102,
-        "total": 153,
+        "ok": 103,
+        "total": 154,
         "slow": 0,
         "confirmed": 51,
         "fails": {
