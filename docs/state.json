@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "startedAt": "2026-08-19",
-  "updatedAt": "2026-10-14T02:03:43.948Z",
+  "updatedAt": "2026-10-14T02:14:44.348Z",
   "components": [
     {
       "id": "console",
@@ -9,7 +9,7 @@
       "desc": "대시보드 · API",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 640,
+      "latencyMs": 650,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -26,7 +26,7 @@
       "desc": "웹호스팅 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 517,
+      "latencyMs": 662,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -43,7 +43,7 @@
       "desc": "클라우드 VM 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 758,
+      "latencyMs": 921,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -65,7 +65,7 @@
       "unmeasured": false,
       "reason": "timeout",
       "error": "timeout",
-      "downStreak": 12,
+      "downStreak": 23,
       "downSince": "2026-10-14T01:52:43.521Z",
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
@@ -82,7 +82,7 @@
       "unmeasured": false,
       "reason": "timeout",
       "error": "timeout",
-      "downStreak": 12,
+      "downStreak": 23,
       "downSince": "2026-10-14T01:52:43.521Z",
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
@@ -482,8 +482,8 @@
         "fails": {}
       },
       "2026-10-14": {
-        "ok": 114,
-        "total": 114,
+        "ok": 125,
+        "total": 125,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -871,8 +871,8 @@
         "fails": {}
       },
       "2026-10-14": {
-        "ok": 114,
-        "total": 114,
+        "ok": 125,
+        "total": 125,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -1260,8 +1260,8 @@
         "fails": {}
       },
       "2026-10-14": {
-        "ok": 114,
-        "total": 114,
+        "ok": 125,
+        "total": 125,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -1658,11 +1658,11 @@
       },
       "2026-10-14": {
         "ok": 102,
-        "total": 114,
+        "total": 125,
         "slow": 0,
-        "confirmed": 12,
+        "confirmed": 23,
         "fails": {
-          "timeout": 12
+          "timeout": 23
         }
       }
     },
@@ -2059,11 +2059,11 @@
       },
       "2026-10-14": {
         "ok": 102,
-        "total": 114,
+        "total": 125,
         "slow": 0,
-        "confirmed": 12,
+        "confirmed": 23,
         "fails": {
-          "timeout": 12
+          "timeout": 23
         }
       }
     }
