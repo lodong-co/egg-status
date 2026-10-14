@@ -9,6 +9,11 @@ name: probe
 # 그 간격이면 20~30분짜리 장애가 통째로 안 잡힌다. 그래서 측정은 러너 안의
 # 루프(scripts/watch.mjs)가 1분마다 하고, 이 cron 은 그 루프가 끊겼을 때
 # 다시 살리는 역할만 한다. 자주 걸어 둘수록 빈 시간이 짧아진다.
+#
+# 그런데 cron 만으로는 이어받기도 안 됐다. 2026-10-13~14 실측으로 루프가 끝난 뒤
+# 다음 예약 실행까지 3~7시간이 비었다(02:42Z 종료 → 장애 복구가 페이지에 안 뜸).
+# 그래서 루프가 끝나면 스스로 다음 실행을 띄운다(마지막 단계). GITHUB_TOKEN 으로 건
+# workflow_dispatch 는 예외적으로 새 실행을 만든다. cron 은 사슬이 끊겼을 때의 예비다.
 on:
   schedule:
     - cron: '*/10 * * * *'
@@ -21,6 +26,7 @@ on:
 
 permissions:
   contents: write           # state.json · incidents.json 커밋
+  actions: write            # 루프 종료 후 다음 실행 띄우기
 
 # 루프가 도는 동안 새로 걸린 예약 실행은 대기시킨다. 취소하지는 않는다 —
 # 지금 도는 루프가 끝나는 순간 대기하던 것이 바로 이어받아서 빈 시간이 안 생긴다.
@@ -50,3 +56,11 @@ jobs:
           # 예약 실행일 때는 inputs 가 비어 있어 기본값이 쓰인다.
           RUN_MINUTES: ${{ github.event.inputs.minutes || '50' }}
         run: node scripts/watch.mjs
+
+      # 루프가 실패로 끝나도 측정은 이어져야 하므로 failure 에도 띄운다.
+      # 수동 취소(cancelled)와 한 번만 재기(minutes=0)는 사슬을 멈추는 방법으로 남겨 둔다.
+      - name: 다음 실행 띄우기
+        if: (success() || failure()) && github.event.inputs.minutes != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run probe.yml --repo "$GITHUB_REPOSITORY" --ref main
