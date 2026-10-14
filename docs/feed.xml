@@ -11,7 +11,8 @@
       <guid isPermaLink="false">https://status.egghosting.com/#auto-domain-2026-10-14T01:52:43.521Z</guid>
       <pubDate>Wed, 14 Oct 2026 05:57:01 GMT</pubDate>
       <description>investigating: 도메인이 30분째 응답하지 않고 있습니다. 확인된 증상은 응답 시간 초과입니다. 에그호스팅 밖에서 하는 자동 점검에서 감지했습니다.
-resolved: 도메인이 정상 응답을 재개했습니다. 약 244분 동안 응답하지 않았습니다.</description>
+resolved: 도메인이 정상 응답을 재개했습니다. 약 244분 동안 응답하지 않았습니다.
+resolved: 오전 9시 53분쯤부터 오후 2시 27분까지 약 4시간 35분 동안 LD PASS 로그인과 에그도메인 접속이 되지 않았습니다. 서버 정리 작업 중 방화벽 설정이 함께 삭제된 것이 원인이었으며, 설정을 복구해 정상화했습니다. 같은 일이 반복되지 않도록 정리 절차를 보완하겠습니다. 이용에 불편을 드려 죄송합니다.</description>
     </item>
     <item>
       <title>로그인 응답 없음</title>
@@ -19,7 +20,8 @@ resolved: 도메인이 정상 응답을 재개했습니다. 약 244분 동안 �
       <guid isPermaLink="false">https://status.egghosting.com/#auto-login-2026-10-14T01:52:43.521Z</guid>
       <pubDate>Wed, 14 Oct 2026 05:57:01 GMT</pubDate>
       <description>investigating: 로그인이 30분째 응답하지 않고 있습니다. 확인된 증상은 응답 시간 초과입니다. 에그호스팅 밖에서 하는 자동 점검에서 감지했습니다.
-resolved: 로그인이 정상 응답을 재개했습니다. 약 244분 동안 응답하지 않았습니다.</description>
+resolved: 로그인이 정상 응답을 재개했습니다. 약 244분 동안 응답하지 않았습니다.
+resolved: 오전 9시 53분쯤부터 오후 2시 27분까지 약 4시간 35분 동안 LD PASS 로그인과 에그도메인 접속이 되지 않았습니다. 서버 정리 작업 중 방화벽 설정이 함께 삭제된 것이 원인이었으며, 설정을 복구해 정상화했습니다. 같은 일이 반복되지 않도록 정리 절차를 보완하겠습니다. 이용에 불편을 드려 죄송합니다.</description>
     </item>
     <item>
       <title>도메인 응답 없음</title>
