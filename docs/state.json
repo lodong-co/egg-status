@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "startedAt": "2026-08-19",
-  "updatedAt": "2026-10-18T14:57:25.620Z",
+  "updatedAt": "2026-10-18T15:08:26.144Z",
   "components": [
     {
       "id": "console",
@@ -9,7 +9,7 @@
       "desc": "대시보드 · API",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 666,
+      "latencyMs": 660,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -26,7 +26,7 @@
       "desc": "웹호스팅 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 1507,
+      "latencyMs": 1109,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -43,7 +43,7 @@
       "desc": "클라우드 VM 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 1817,
+      "latencyMs": 1526,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -60,7 +60,7 @@
       "desc": "도메인 등록 · DNS",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 1744,
+      "latencyMs": 1301,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -77,7 +77,7 @@
       "desc": "LD PASS · 소셜 · 아이디",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 1763,
+      "latencyMs": 1368,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -510,8 +510,15 @@
         "fails": {}
       },
       "2026-10-18": {
-        "ok": 1458,
-        "total": 1458,
+        "ok": 1460,
+        "total": 1460,
+        "slow": 0,
+        "confirmed": 0,
+        "fails": {}
+      },
+      "2026-10-19": {
+        "ok": 9,
+        "total": 9,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -927,8 +934,15 @@
         "fails": {}
       },
       "2026-10-18": {
-        "ok": 1458,
-        "total": 1458,
+        "ok": 1460,
+        "total": 1460,
+        "slow": 0,
+        "confirmed": 0,
+        "fails": {}
+      },
+      "2026-10-19": {
+        "ok": 9,
+        "total": 9,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -1344,8 +1358,15 @@
         "fails": {}
       },
       "2026-10-18": {
-        "ok": 1458,
-        "total": 1458,
+        "ok": 1460,
+        "total": 1460,
+        "slow": 0,
+        "confirmed": 0,
+        "fails": {}
+      },
+      "2026-10-19": {
+        "ok": 9,
+        "total": 9,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -1771,8 +1792,15 @@
         "fails": {}
       },
       "2026-10-18": {
-        "ok": 1458,
-        "total": 1458,
+        "ok": 1460,
+        "total": 1460,
+        "slow": 0,
+        "confirmed": 0,
+        "fails": {}
+      },
+      "2026-10-19": {
+        "ok": 9,
+        "total": 9,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -2200,8 +2228,15 @@
         "fails": {}
       },
       "2026-10-18": {
-        "ok": 1458,
-        "total": 1458,
+        "ok": 1460,
+        "total": 1460,
+        "slow": 0,
+        "confirmed": 0,
+        "fails": {}
+      },
+      "2026-10-19": {
+        "ok": 9,
+        "total": 9,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
