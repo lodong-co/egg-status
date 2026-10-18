@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "startedAt": "2026-08-19",
-  "updatedAt": "2026-10-18T03:35:17.058Z",
+  "updatedAt": "2026-10-18T03:46:17.629Z",
   "components": [
     {
       "id": "console",
@@ -9,7 +9,7 @@
       "desc": "대시보드 · API",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 670,
+      "latencyMs": 688,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -26,7 +26,7 @@
       "desc": "웹호스팅 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 687,
+      "latencyMs": 686,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -43,7 +43,7 @@
       "desc": "클라우드 VM 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 962,
+      "latencyMs": 950,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -60,7 +60,7 @@
       "desc": "도메인 등록 · DNS",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 970,
+      "latencyMs": 964,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -510,8 +510,8 @@
         "fails": {}
       },
       "2026-10-18": {
-        "ok": 766,
-        "total": 766,
+        "ok": 777,
+        "total": 777,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -927,8 +927,8 @@
         "fails": {}
       },
       "2026-10-18": {
-        "ok": 766,
-        "total": 766,
+        "ok": 777,
+        "total": 777,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -1344,8 +1344,8 @@
         "fails": {}
       },
       "2026-10-18": {
-        "ok": 766,
-        "total": 766,
+        "ok": 777,
+        "total": 777,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -1771,8 +1771,8 @@
         "fails": {}
       },
       "2026-10-18": {
-        "ok": 766,
-        "total": 766,
+        "ok": 777,
+        "total": 777,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -2200,8 +2200,8 @@
         "fails": {}
       },
       "2026-10-18": {
-        "ok": 766,
-        "total": 766,
+        "ok": 777,
+        "total": 777,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
