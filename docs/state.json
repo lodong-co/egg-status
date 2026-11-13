@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "startedAt": "2026-08-19",
-  "updatedAt": "2026-11-13T12:23:09.839Z",
+  "updatedAt": "2026-11-13T18:44:48.428Z",
   "components": [
     {
       "id": "console",
@@ -9,7 +9,7 @@
       "desc": "대시보드 · API",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 463,
+      "latencyMs": 2589,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -26,7 +26,7 @@
       "desc": "웹호스팅 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 723,
+      "latencyMs": 895,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -43,7 +43,7 @@
       "desc": "클라우드 VM 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 547,
+      "latencyMs": 1816,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -60,7 +60,7 @@
       "desc": "도메인 등록 · DNS",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 719,
+      "latencyMs": 2015,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -77,8 +77,8 @@
       "desc": "LD PASS · 소셜 · 아이디",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 793,
-      "slow": false,
+      "latencyMs": 4887,
+      "slow": true,
       "unmeasured": false,
       "reason": null,
       "error": null,
@@ -697,6 +697,13 @@
         "slow": 0,
         "confirmed": 0,
         "fails": {}
+      },
+      "2026-11-14": {
+        "ok": 1,
+        "total": 1,
+        "slow": 0,
+        "confirmed": 0,
+        "fails": {}
       }
     },
     "web": {
@@ -1296,6 +1303,13 @@
         "slow": 0,
         "confirmed": 0,
         "fails": {}
+      },
+      "2026-11-14": {
+        "ok": 1,
+        "total": 1,
+        "slow": 0,
+        "confirmed": 0,
+        "fails": {}
       }
     },
     "cloud": {
@@ -1892,6 +1906,13 @@
       "2026-11-13": {
         "ok": 204,
         "total": 204,
+        "slow": 0,
+        "confirmed": 0,
+        "fails": {}
+      },
+      "2026-11-14": {
+        "ok": 1,
+        "total": 1,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -2504,6 +2525,13 @@
         "slow": 2,
         "confirmed": 0,
         "fails": {}
+      },
+      "2026-11-14": {
+        "ok": 1,
+        "total": 1,
+        "slow": 0,
+        "confirmed": 0,
+        "fails": {}
       }
     },
     "login": {
@@ -3113,6 +3141,13 @@
         "ok": 204,
         "total": 204,
         "slow": 2,
+        "confirmed": 0,
+        "fails": {}
+      },
+      "2026-11-14": {
+        "ok": 1,
+        "total": 1,
+        "slow": 1,
         "confirmed": 0,
         "fails": {}
       }
