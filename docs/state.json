@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "startedAt": "2026-08-19",
-  "updatedAt": "2026-11-16T18:31:43.470Z",
+  "updatedAt": "2026-11-16T18:42:43.852Z",
   "components": [
     {
       "id": "console",
@@ -9,12 +9,12 @@
       "desc": "대시보드 · API",
       "up": false,
       "statusCode": 503,
-      "latencyMs": 654,
+      "latencyMs": 722,
       "slow": false,
       "unmeasured": false,
       "reason": "http-503",
       "error": "http 503",
-      "downStreak": 12,
+      "downStreak": 23,
       "downSince": "2026-11-16T18:20:43.094Z",
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
@@ -26,7 +26,7 @@
       "desc": "웹호스팅 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 739,
+      "latencyMs": 738,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -43,7 +43,7 @@
       "desc": "클라우드 VM 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 883,
+      "latencyMs": 1007,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -65,7 +65,7 @@
       "unmeasured": false,
       "reason": "timeout",
       "error": "timeout",
-      "downStreak": 12,
+      "downStreak": 23,
       "downSince": "2026-11-16T18:20:43.094Z",
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
@@ -82,7 +82,7 @@
       "unmeasured": false,
       "reason": "timeout",
       "error": "timeout",
-      "downStreak": 12,
+      "downStreak": 23,
       "downSince": "2026-11-16T18:20:43.094Z",
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
@@ -712,11 +712,11 @@
       },
       "2026-11-17": {
         "ok": 0,
-        "total": 12,
+        "total": 23,
         "slow": 0,
-        "confirmed": 12,
+        "confirmed": 23,
         "fails": {
-          "http-503": 12
+          "http-503": 23
         }
       }
     },
@@ -1335,8 +1335,8 @@
         "fails": {}
       },
       "2026-11-17": {
-        "ok": 12,
-        "total": 12,
+        "ok": 23,
+        "total": 23,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -1959,8 +1959,8 @@
         }
       },
       "2026-11-17": {
-        "ok": 12,
-        "total": 12,
+        "ok": 23,
+        "total": 23,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -2592,11 +2592,11 @@
       },
       "2026-11-17": {
         "ok": 0,
-        "total": 12,
+        "total": 23,
         "slow": 0,
-        "confirmed": 12,
+        "confirmed": 23,
         "fails": {
-          "timeout": 12
+          "timeout": 23
         }
       }
     },
@@ -3228,11 +3228,11 @@
       },
       "2026-11-17": {
         "ok": 0,
-        "total": 12,
+        "total": 23,
         "slow": 0,
-        "confirmed": 12,
+        "confirmed": 23,
         "fails": {
-          "timeout": 12
+          "timeout": 23
         }
       }
     }
