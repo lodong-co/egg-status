@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "startedAt": "2026-08-19",
-  "updatedAt": "2026-11-16T18:20:43.094Z",
+  "updatedAt": "2026-11-16T18:31:43.470Z",
   "components": [
     {
       "id": "console",
@@ -9,12 +9,12 @@
       "desc": "대시보드 · API",
       "up": false,
       "statusCode": 503,
-      "latencyMs": 642,
+      "latencyMs": 654,
       "slow": false,
       "unmeasured": false,
       "reason": "http-503",
       "error": "http 503",
-      "downStreak": 1,
+      "downStreak": 12,
       "downSince": "2026-11-16T18:20:43.094Z",
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
@@ -26,7 +26,7 @@
       "desc": "웹호스팅 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 852,
+      "latencyMs": 739,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -43,7 +43,7 @@
       "desc": "클라우드 VM 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 1986,
+      "latencyMs": 883,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -60,12 +60,12 @@
       "desc": "도메인 등록 · DNS",
       "up": false,
       "statusCode": null,
-      "latencyMs": 10001,
+      "latencyMs": 10000,
       "slow": false,
       "unmeasured": false,
       "reason": "timeout",
       "error": "timeout",
-      "downStreak": 1,
+      "downStreak": 12,
       "downSince": "2026-11-16T18:20:43.094Z",
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
@@ -77,12 +77,12 @@
       "desc": "LD PASS · 소셜 · 아이디",
       "up": false,
       "statusCode": null,
-      "latencyMs": 10001,
+      "latencyMs": 10000,
       "slow": false,
       "unmeasured": false,
       "reason": "timeout",
       "error": "timeout",
-      "downStreak": 1,
+      "downStreak": 12,
       "downSince": "2026-11-16T18:20:43.094Z",
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
@@ -712,11 +712,11 @@
       },
       "2026-11-17": {
         "ok": 0,
-        "total": 1,
+        "total": 12,
         "slow": 0,
-        "confirmed": 0,
+        "confirmed": 12,
         "fails": {
-          "http-503": 1
+          "http-503": 12
         }
       }
     },
@@ -1335,8 +1335,8 @@
         "fails": {}
       },
       "2026-11-17": {
-        "ok": 1,
-        "total": 1,
+        "ok": 12,
+        "total": 12,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -1959,8 +1959,8 @@
         }
       },
       "2026-11-17": {
-        "ok": 1,
-        "total": 1,
+        "ok": 12,
+        "total": 12,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -2592,11 +2592,11 @@
       },
       "2026-11-17": {
         "ok": 0,
-        "total": 1,
+        "total": 12,
         "slow": 0,
-        "confirmed": 0,
+        "confirmed": 12,
         "fails": {
-          "timeout": 1
+          "timeout": 12
         }
       }
     },
@@ -3228,11 +3228,11 @@
       },
       "2026-11-17": {
         "ok": 0,
-        "total": 1,
+        "total": 12,
         "slow": 0,
-        "confirmed": 0,
+        "confirmed": 12,
         "fails": {
-          "timeout": 1
+          "timeout": 12
         }
       }
     }
