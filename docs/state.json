@@ -1,24 +1,24 @@
 {
   "schema": 1,
   "startedAt": "2026-08-19",
-  "updatedAt": "2026-11-16T19:10:44.775Z",
+  "updatedAt": "2026-11-17T01:58:13.628Z",
   "components": [
     {
       "id": "console",
       "name": "관리 콘솔",
       "desc": "대시보드 · API",
-      "up": false,
-      "statusCode": 503,
-      "latencyMs": 650,
+      "up": true,
+      "statusCode": 200,
+      "latencyMs": 790,
       "slow": false,
       "unmeasured": false,
-      "reason": "http-503",
-      "error": "http 503",
-      "downStreak": 51,
-      "downSince": "2026-11-16T18:20:43.094Z",
+      "reason": null,
+      "error": null,
+      "downStreak": 0,
+      "downSince": null,
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
-      "changedAt": "2026-11-16T18:20:43.094Z"
+      "changedAt": "2026-11-17T01:58:13.628Z"
     },
     {
       "id": "web",
@@ -26,7 +26,7 @@
       "desc": "웹호스팅 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 704,
+      "latencyMs": 846,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -43,7 +43,7 @@
       "desc": "클라우드 VM 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 978,
+      "latencyMs": 1784,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -58,35 +58,35 @@
       "id": "domain",
       "name": "도메인",
       "desc": "도메인 등록 · DNS",
-      "up": false,
-      "statusCode": null,
-      "latencyMs": 10000,
+      "up": true,
+      "statusCode": 200,
+      "latencyMs": 1101,
       "slow": false,
       "unmeasured": false,
-      "reason": "timeout",
-      "error": "timeout",
-      "downStreak": 51,
-      "downSince": "2026-11-16T18:20:43.094Z",
+      "reason": null,
+      "error": null,
+      "downStreak": 0,
+      "downSince": null,
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
-      "changedAt": "2026-11-16T18:20:43.094Z"
+      "changedAt": "2026-11-17T01:58:13.628Z"
     },
     {
       "id": "login",
       "name": "로그인",
       "desc": "LD PASS · 소셜 · 아이디",
-      "up": false,
-      "statusCode": null,
-      "latencyMs": 9999,
+      "up": true,
+      "statusCode": 200,
+      "latencyMs": 1194,
       "slow": false,
       "unmeasured": false,
-      "reason": "timeout",
-      "error": "timeout",
-      "downStreak": 51,
-      "downSince": "2026-11-16T18:20:43.094Z",
+      "reason": null,
+      "error": null,
+      "downStreak": 0,
+      "downSince": null,
       "firstOkAt": "2026-08-25T23:25:28.831Z",
       "slowMs": 4000,
-      "changedAt": "2026-11-16T18:20:43.094Z"
+      "changedAt": "2026-11-17T01:58:13.628Z"
     }
   ],
   "daily": {
@@ -711,8 +711,8 @@
         "fails": {}
       },
       "2026-11-17": {
-        "ok": 0,
-        "total": 51,
+        "ok": 1,
+        "total": 52,
         "slow": 0,
         "confirmed": 51,
         "fails": {
@@ -1335,8 +1335,8 @@
         "fails": {}
       },
       "2026-11-17": {
-        "ok": 51,
-        "total": 51,
+        "ok": 52,
+        "total": 52,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -1959,8 +1959,8 @@
         }
       },
       "2026-11-17": {
-        "ok": 51,
-        "total": 51,
+        "ok": 52,
+        "total": 52,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
@@ -2591,8 +2591,8 @@
         "fails": {}
       },
       "2026-11-17": {
-        "ok": 0,
-        "total": 51,
+        "ok": 1,
+        "total": 52,
         "slow": 0,
         "confirmed": 51,
         "fails": {
@@ -3227,8 +3227,8 @@
         "fails": {}
       },
       "2026-11-17": {
-        "ok": 0,
-        "total": 51,
+        "ok": 1,
+        "total": 52,
         "slow": 0,
         "confirmed": 51,
         "fails": {
