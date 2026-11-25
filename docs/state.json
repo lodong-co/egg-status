@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "startedAt": "2026-08-19",
-  "updatedAt": "2026-11-25T14:56:33.020Z",
+  "updatedAt": "2026-11-25T15:07:33.491Z",
   "components": [
     {
       "id": "console",
@@ -9,7 +9,7 @@
       "desc": "대시보드 · API",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 761,
+      "latencyMs": 742,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -26,7 +26,7 @@
       "desc": "웹호스팅 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 1551,
+      "latencyMs": 794,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -43,7 +43,7 @@
       "desc": "클라우드 VM 플랫폼",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 1183,
+      "latencyMs": 1817,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -60,7 +60,7 @@
       "desc": "도메인 등록 · DNS",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 1352,
+      "latencyMs": 1000,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -77,7 +77,7 @@
       "desc": "LD PASS · 소셜 · 아이디",
       "up": true,
       "statusCode": 200,
-      "latencyMs": 1422,
+      "latencyMs": 1101,
       "slow": false,
       "unmeasured": false,
       "reason": null,
@@ -91,13 +91,6 @@
   ],
   "daily": {
     "console": {
-      "2026-08-28": {
-        "ok": 102,
-        "total": 102,
-        "slow": 0,
-        "fails": {},
-        "confirmed": 0
-      },
       "2026-08-29": {
         "ok": 204,
         "total": 204,
@@ -719,21 +712,21 @@
         "fails": {}
       },
       "2026-11-25": {
-        "ok": 103,
-        "total": 103,
+        "ok": 106,
+        "total": 106,
+        "slow": 0,
+        "confirmed": 0,
+        "fails": {}
+      },
+      "2026-11-26": {
+        "ok": 8,
+        "total": 8,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
       }
     },
     "web": {
-      "2026-08-28": {
-        "ok": 102,
-        "total": 102,
-        "slow": 0,
-        "fails": {},
-        "confirmed": 0
-      },
       "2026-08-29": {
         "ok": 204,
         "total": 204,
@@ -1353,21 +1346,21 @@
         "fails": {}
       },
       "2026-11-25": {
-        "ok": 103,
-        "total": 103,
+        "ok": 106,
+        "total": 106,
+        "slow": 0,
+        "confirmed": 0,
+        "fails": {}
+      },
+      "2026-11-26": {
+        "ok": 8,
+        "total": 8,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
       }
     },
     "cloud": {
-      "2026-08-28": {
-        "ok": 102,
-        "total": 102,
-        "slow": 0,
-        "fails": {},
-        "confirmed": 0
-      },
       "2026-08-29": {
         "ok": 204,
         "total": 204,
@@ -1989,21 +1982,21 @@
         "fails": {}
       },
       "2026-11-25": {
-        "ok": 103,
-        "total": 103,
+        "ok": 106,
+        "total": 106,
+        "slow": 0,
+        "confirmed": 0,
+        "fails": {}
+      },
+      "2026-11-26": {
+        "ok": 8,
+        "total": 8,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
       }
     },
     "domain": {
-      "2026-08-28": {
-        "ok": 102,
-        "total": 102,
-        "slow": 0,
-        "fails": {},
-        "confirmed": 0
-      },
       "2026-08-29": {
         "ok": 204,
         "total": 204,
@@ -2633,21 +2626,21 @@
         "fails": {}
       },
       "2026-11-25": {
-        "ok": 103,
-        "total": 103,
+        "ok": 106,
+        "total": 106,
+        "slow": 0,
+        "confirmed": 0,
+        "fails": {}
+      },
+      "2026-11-26": {
+        "ok": 8,
+        "total": 8,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
       }
     },
     "login": {
-      "2026-08-28": {
-        "ok": 102,
-        "total": 102,
-        "slow": 0,
-        "fails": {},
-        "confirmed": 0
-      },
       "2026-08-29": {
         "ok": 204,
         "total": 204,
@@ -3279,8 +3272,15 @@
         "fails": {}
       },
       "2026-11-25": {
-        "ok": 103,
-        "total": 103,
+        "ok": 106,
+        "total": 106,
+        "slow": 0,
+        "confirmed": 0,
+        "fails": {}
+      },
+      "2026-11-26": {
+        "ok": 8,
+        "total": 8,
         "slow": 0,
         "confirmed": 0,
         "fails": {}
